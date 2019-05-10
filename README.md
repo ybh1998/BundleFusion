@@ -17,7 +17,7 @@ Requirements:
 - mLib external libraries can be downloaded [here](http://kaldir.vc.in.tum.de/mLib/mLibExternal.zip)
 
 Default file tree:
-'''
+```
 BundleFusion-master
 ├──BundleFusion
 │  │──data
@@ -29,7 +29,7 @@ BundleFusion-master
    │──libsLinux
    │──libsOSX
    └──libsWindows
-'''
+```
 Put sequence.sens in BundleFusion-master/BundleFusion/data/.
 
 ## End
