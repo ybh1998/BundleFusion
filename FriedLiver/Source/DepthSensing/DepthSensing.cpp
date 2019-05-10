@@ -8,7 +8,8 @@
 
 #include <windows.h>
 #include <d3d11.h>
-#include <xnamath.h>
+#include <DirectXMath.h>
+#include <DirectXPackedVector.h >
 #include "DX11Utils.h"
 
 #include "GlobalAppState.h"
@@ -134,7 +135,7 @@ int startDepthSensing(OnlineBundler* bundler, RGBDSensor* sensor, CUDAImageManag
 
 	DXUTInit(true, true); // Parse the command line, show msgboxes on error, and an extra cmd line param to force REF for now
 	DXUTSetCursorSettings(true, true); // Show the cursor and clip it when in full screen
-	DXUTCreateWindow(GlobalAppState::get().s_windowWidth, GlobalAppState::get().s_windowHeight, L"Fried Liver", false);
+	DXUTCreateWindow(L"Fried Liver", NULL, NULL, NULL, GlobalAppState::get().s_windowWidth, GlobalAppState::get().s_windowHeight);
 
 	DXUTSetIsInGammaCorrectMode(false);	//gamma fix (for kinect color)
 
@@ -155,11 +156,9 @@ bool CALLBACK ModifyDeviceSettings(DXUTDeviceSettings* pDeviceSettings, void* pU
 	if (s_bFirstTime)
 	{
 		s_bFirstTime = false;
-		if ((DXUT_D3D9_DEVICE == pDeviceSettings->ver && pDeviceSettings->d3d9.DeviceType == D3DDEVTYPE_REF) ||
-			(DXUT_D3D11_DEVICE == pDeviceSettings->ver &&
-			pDeviceSettings->d3d11.DriverType == D3D_DRIVER_TYPE_REFERENCE))
+		if (pDeviceSettings->d3d11.DriverType == D3D_DRIVER_TYPE_REFERENCE)
 		{
-			DXUTDisplaySwitchingToREFWarning(pDeviceSettings->ver);
+			DXUTDisplaySwitchingToREFWarning();
 		}
 	}
 
@@ -182,11 +181,11 @@ void RenderText()
 {
 	g_pTxtHelper->Begin();
 	g_pTxtHelper->SetInsertionPos(2, 0);
-	g_pTxtHelper->SetForegroundColor(D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f));
+	g_pTxtHelper->SetForegroundColor(DirectX::XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f));
 	g_pTxtHelper->DrawTextLine(DXUTGetFrameStats(DXUTIsVsyncEnabled()));
 	g_pTxtHelper->DrawTextLine(DXUTGetDeviceStats());
 	if (!g_bRenderHelp) {
-		g_pTxtHelper->SetForegroundColor(D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f));
+		g_pTxtHelper->SetForegroundColor(DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
 		g_pTxtHelper->DrawTextLine(L"\tPress F1 for help");
 	}
 	g_pTxtHelper->End();
@@ -201,7 +200,7 @@ void RenderHelp()
 {
 	g_pTxtHelper->Begin();
 	g_pTxtHelper->SetInsertionPos(2, 40);
-	g_pTxtHelper->SetForegroundColor(D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f));
+	g_pTxtHelper->SetForegroundColor(DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f));
 	g_pTxtHelper->DrawTextLine(L"Controls ");
 	g_pTxtHelper->DrawTextLine(L"  \tF1:\t Hide help");
 	g_pTxtHelper->DrawTextLine(L"  \tF2:\t Screenshot");
@@ -441,7 +440,7 @@ void CALLBACK OnKeyboard(UINT nChar, bool bKeyDown, bool bAltDown, void* pUserCo
 			break;
 		case VK_F2:
 			swprintf_s(sz, 200, L"screenshot%d.bmp", whichScreenshot++);
-			DXUTSnapD3D11Screenshot(sz, D3DX11_IFF_BMP);
+			DXUTSnapD3D11Screenshot(sz, false);
 			std::wcout << std::wstring(sz) << std::endl;
 			break;
 		case '\t':
@@ -606,9 +605,9 @@ HRESULT CALLBACK OnD3D11CreateDevice(ID3D11Device* pd3dDevice, const DXGI_SURFAC
 	V_RETURN(g_RGBDRenderer.OnD3D11CreateDevice(pd3dDevice, GlobalAppState::get().s_rayCastWidth, GlobalAppState::get().s_rayCastHeight));
 	V_RETURN(g_CustomRenderTarget.OnD3D11CreateDevice(pd3dDevice, GlobalAppState::get().s_rayCastWidth, GlobalAppState::get().s_rayCastHeight, formats));
 
-	D3DXVECTOR3 vecEye(0.0f, 0.0f, 0.0f);
-	D3DXVECTOR3 vecAt(0.0f, 0.0f, 1.0f);
-	g_Camera.SetViewParams(&vecEye, &vecAt);
+	DirectX::XMFLOAT3 vecEye(0.0f, 0.0f, 0.0f);
+	DirectX::XMFLOAT3 vecAt(0.0f, 0.0f, 1.0f);
+	g_Camera.SetViewParams(XMLoadFloat3(&vecEye), XMLoadFloat3(&vecAt));
 
 
 	g_sceneRep = new CUDASceneRepHashSDF(CUDASceneRepHashSDF::parametersFromGlobalAppState(GlobalAppState::get()));
@@ -700,10 +699,10 @@ HRESULT CALLBACK OnD3D11ResizedSwapChain(ID3D11Device* pd3dDevice, IDXGISwapChai
 	//g_Camera.SetRotateButtons(true, false, false);
 
 	float fAspectRatio = pBackBufferSurfaceDesc->Width / (FLOAT)pBackBufferSurfaceDesc->Height;
-	//D3DXVECTOR3 vecEye ( 0.0f, 0.0f, 0.0f );
-	//D3DXVECTOR3 vecAt ( 0.0f, 0.0f, 1.0f );
+	//DirectX::XMFLOAT3 vecEye ( 0.0f, 0.0f, 0.0f );
+	//DirectX::XMFLOAT3 vecAt ( 0.0f, 0.0f, 1.0f );
 	//g_Camera.SetViewParams( &vecEye, &vecAt );
-	g_Camera.SetProjParams(D3DX_PI / 4, fAspectRatio, 0.1f, 10.0f);
+	g_Camera.SetProjParams(3.141592654f / 4, fAspectRatio, 0.1f, 10.0f);
 
 
 	V_RETURN(DX11PhongLighting::OnResize(pd3dDevice, pBackBufferSurfaceDesc->Width, pBackBufferSurfaceDesc->Height));
@@ -782,7 +781,9 @@ void visualizeFrame(ID3D11DeviceContext* pd3dImmediateContext, ID3D11Device* pd3
 	pd3dImmediateContext->ClearRenderTargetView(pRTV, ClearColor);
 	pd3dImmediateContext->ClearDepthStencilView(pDSV, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
-	mat4f view = MatrixConversion::toMlib(*g_Camera.GetViewMatrix());
+  DirectX::XMFLOAT4X4 temp;
+  DirectX::XMStoreFloat4x4(&temp, g_Camera.GetViewMatrix());
+	mat4f view = MatrixConversion::toMlib(temp);
 	view.setIdentity();	//wanna disable that for the video..
 	mat4f t = mat4f::identity();
 	t(1, 1) *= -1.0f;	view = t * view * t;	//t is self-inverse

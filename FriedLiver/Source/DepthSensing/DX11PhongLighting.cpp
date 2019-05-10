@@ -207,7 +207,7 @@ void DX11PhongLighting::render(ID3D11DeviceContext* pd3dDeviceContext, ID3D11Sha
 	if(FAILED(hr)) return;
 	cbConstant *cbufferConstant = (cbConstant*)mappedResource.pData;
 	cbufferConstant->useMaterial = useMaterial ? 1 : 0;
-	cbufferConstant->overlayColor = D3DXVECTOR3(overlayColor.x, overlayColor.y, overlayColor.z);
+	cbufferConstant->overlayColor = DirectX::XMFLOAT3(overlayColor.x, overlayColor.y, overlayColor.z);
 	pd3dDeviceContext->Unmap(s_ConstantBuffer, 0);
 
 	// copy lightbuffer to gpu

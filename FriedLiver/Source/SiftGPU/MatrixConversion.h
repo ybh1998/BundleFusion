@@ -31,13 +31,13 @@ namespace MatrixConversion
 	}
 
 	// dx/cuda conversion
-	static vec3f toMlib(const D3DXVECTOR3& v) {
+	static vec3f toMlib(const DirectX::XMFLOAT3& v) {
 		return vec3f(v.x, v.y, v.z);
 	}
-	static vec4f toMlib(const D3DXVECTOR4& v) {
+	static vec4f toMlib(const DirectX::XMFLOAT4& v) {
 		return vec4f(v.x, v.y, v.z, v.w);
 	}
-	static mat4f toMlib(const D3DXMATRIX& m) {
+	static mat4f toMlib(const DirectX::XMFLOAT4X4& m) {
 		mat4f c((const float*)&m);
 		return c.getTranspose();
 	}

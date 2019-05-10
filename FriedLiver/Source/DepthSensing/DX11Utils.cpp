@@ -170,8 +170,8 @@ HRESULT CompileShaderFromFile( WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR sz
 		dwShaderFlags |= pCompilerFlags;
 
 		ID3DBlob* pErrorBlob;
-		hr = D3DX11CompileFromFile( str, pDefines, NULL, szEntryPoint, szShaderModel, 
-			dwShaderFlags, 0, NULL, ppBlobOut, &pErrorBlob, NULL );
+		hr = D3DCompileFromFile( str, pDefines, NULL, szEntryPoint, szShaderModel,
+			dwShaderFlags, 0, ppBlobOut, &pErrorBlob);
 		if( FAILED(hr) )
 		{
 			if( pErrorBlob != NULL )
@@ -386,7 +386,7 @@ void LoadCamera( CModelViewerCamera &camera, const char* filename )
 	std::ifstream file;
 	file.open(filename);
 	if (file.is_open() && file.good()) {
-		D3DXVECTOR3 eye, lookAt;
+		DirectX::XMFLOAT3 eye, lookAt;
 		D3DXQUATERNION world, view;
 
 		file >> eye.x >> eye.y >> eye.z;

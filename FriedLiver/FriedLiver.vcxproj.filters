@@ -6,9 +6,6 @@
     <ClCompile Include="Source\DXUT\Core\DXUT.cpp">
       <Filter>DXUT</Filter>
     </ClCompile>
-    <ClCompile Include="Source\DXUT\Core\DXUTDevice9.cpp">
-      <Filter>DXUT</Filter>
-    </ClCompile>
     <ClCompile Include="Source\DXUT\Core\DXUTDevice11.cpp">
       <Filter>DXUT</Filter>
     </ClCompile>
@@ -149,6 +146,24 @@
     <ClCompile Include="Source\KinectOneSensor.cpp">
       <Filter>Sensors</Filter>
     </ClCompile>
+    <ClCompile Include="Source\DXUT\Core\DDSTextureLoader.cpp">
+      <Filter>DXUT</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DXUT\Core\dxerr.cpp">
+      <Filter>DXUT</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DXUT\Core\ScreenGrab.cpp">
+      <Filter>DXUT</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DXUT\Core\WICTextureLoader.cpp">
+      <Filter>DXUT</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DXUT\Optional\DXUTguiIME.cpp">
+      <Filter>DXUT</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DXUT\Optional\ImeUi.cpp">
+      <Filter>DXUT</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\FriedLiver.h" />
@@ -157,9 +172,6 @@
       <Filter>DXUT</Filter>
     </ClInclude>
     <ClInclude Include="Source\DXUT\Core\DXUT.h">
-      <Filter>DXUT</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\DXUT\Core\DXUTDevice9.h">
       <Filter>DXUT</Filter>
     </ClInclude>
     <ClInclude Include="Source\DXUT\Core\DXUTDevice11.h">
@@ -398,6 +410,27 @@
     </ClInclude>
     <ClInclude Include="Source\KinectOneSensor.h">
       <Filter>Sensors</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DXUT\Core\DDSTextureLoader.h">
+      <Filter>DXUT</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DXUT\Core\dxerr.h">
+      <Filter>DXUT</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DXUT\Core\ScreenGrab.h">
+      <Filter>DXUT</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DXUT\Core\WICTextureLoader.h">
+      <Filter>DXUT</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DXUT\Optional\DXUTguiIME.h">
+      <Filter>DXUT</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DXUT\Optional\DXUTLockFreePipe.h">
+      <Filter>DXUT</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DXUT\Optional\ImeUi.h">
+      <Filter>DXUT</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

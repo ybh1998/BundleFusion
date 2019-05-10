@@ -1,4 +1,4 @@
-
+#pragma once
 //
 // mLib config options
 //
@@ -10,7 +10,6 @@
 //
 // mLib includes
 //
-
 
 #include "mLibCore.h"
 #include "mLibFreeImage.h"

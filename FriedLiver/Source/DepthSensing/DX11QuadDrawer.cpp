@@ -105,10 +105,10 @@ HRESULT DX11QuadDrawer::OnD3D11CreateDevice( ID3D11Device* pd3dDevice )
 
 	SimpleVertex vertices[] =
 	{
-		{ D3DXVECTOR3( -1.0f, -1.0f, 0.0f ), D3DXVECTOR2( 0.0f, 1.0f ) },
-		{ D3DXVECTOR3( 1.0f, -1.0f, 0.0f ), D3DXVECTOR2( 1.0f, 1.0f ) },
-		{ D3DXVECTOR3( 1.0f, 1.0f, 0.0f ), D3DXVECTOR2( 1.0f, 0.0f ) },
-		{ D3DXVECTOR3( -1.0f, 1.0f, 0.0f ), D3DXVECTOR2( 0.0f, 0.0f ) }
+		{ DirectX::XMFLOAT3( -1.0f, -1.0f, 0.0f ), DirectX::XMFLOAT2( 0.0f, 1.0f ) },
+		{ DirectX::XMFLOAT3( 1.0f, -1.0f, 0.0f ), DirectX::XMFLOAT2( 1.0f, 1.0f ) },
+		{ DirectX::XMFLOAT3( 1.0f, 1.0f, 0.0f ), DirectX::XMFLOAT2( 1.0f, 0.0f ) },
+		{ DirectX::XMFLOAT3( -1.0f, 1.0f, 0.0f ), DirectX::XMFLOAT2( 0.0f, 0.0f ) }
 	};
 
 	D3D11_BUFFER_DESC desc;
@@ -262,7 +262,7 @@ void DX11QuadDrawer::OnD3D11DestroyDevice()
 	cutilSafeCall(cudaGraphicsUnregisterResource(s_dCuda2));
 }
 
-HRESULT DX11QuadDrawer::RenderQuadDynamicDEPTHasHSV(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dDeviceContext, const float* d_data, float minDepth, float maxDepth, unsigned int width, unsigned int height, float scale /*= 1.0f*/, D3DXVECTOR2 Pow2Ratios /*= D3DXVECTOR2(1.0f, 1.0f)*/, ID3D11PixelShader* pixelShader /*= NULL*/)
+HRESULT DX11QuadDrawer::RenderQuadDynamicDEPTHasHSV(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dDeviceContext, const float* d_data, float minDepth, float maxDepth, unsigned int width, unsigned int height, float scale /*= 1.0f*/, DirectX::XMFLOAT2 Pow2Ratios /*= DirectX::XMFLOAT2(1.0f, 1.0f)*/, ID3D11PixelShader* pixelShader /*= NULL*/)
 {
 	//TODO this function is not very efficient...
 	float4* d_dataFloat4;
@@ -274,7 +274,7 @@ HRESULT DX11QuadDrawer::RenderQuadDynamicDEPTHasHSV(ID3D11Device* pd3dDevice, ID
 }
 
 
-HRESULT DX11QuadDrawer::RenderQuadDynamicUCHAR4(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dDeviceContext, const uchar4* d_data, unsigned int width, unsigned int height, float scale /*= 1.0f*/, D3DXVECTOR2 Pow2Ratios /*= D3DXVECTOR2(1.0f, 1.0f)*/, ID3D11PixelShader* pixelShader /*= NULL*/)
+HRESULT DX11QuadDrawer::RenderQuadDynamicUCHAR4(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dDeviceContext, const uchar4* d_data, unsigned int width, unsigned int height, float scale /*= 1.0f*/, DirectX::XMFLOAT2 Pow2Ratios /*= DirectX::XMFLOAT2(1.0f, 1.0f)*/, ID3D11PixelShader* pixelShader /*= NULL*/)
 {
 	//TODO this function is not very efficient...
 	float4* d_dataFloat4;
@@ -286,7 +286,7 @@ HRESULT DX11QuadDrawer::RenderQuadDynamicUCHAR4(ID3D11Device* pd3dDevice, ID3D11
 }
 
 
-HRESULT DX11QuadDrawer::RenderQuadDynamic(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dDeviceContext, float* d_data, unsigned int nChannels, unsigned int width, unsigned int height, float scale /*= 1.0f */, D3DXVECTOR2 Pow2Ratios /*= D3DXVECTOR2(1.0f, 1.0f)*/, ID3D11PixelShader* pixelShader /*= NULL*/)
+HRESULT DX11QuadDrawer::RenderQuadDynamic(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dDeviceContext, float* d_data, unsigned int nChannels, unsigned int width, unsigned int height, float scale /*= 1.0f */, DirectX::XMFLOAT2 Pow2Ratios /*= DirectX::XMFLOAT2(1.0f, 1.0f)*/, ID3D11PixelShader* pixelShader /*= NULL*/)
 {
 	HRESULT hr = S_OK;
 
@@ -329,7 +329,7 @@ HRESULT DX11QuadDrawer::RenderQuadDynamic(ID3D11Device* pd3dDevice, ID3D11Device
 	return hr;
 }
 
-void DX11QuadDrawer::RenderQuadHelper(ID3D11DeviceContext* pd3dDeviceContext, float* d_data, cudaGraphicsResource* pCuda, ID3D11ShaderResourceView* pTmpTextureSRV, unsigned int size, float scale, D3DXVECTOR2 Pow2Ratios , ID3D11PixelShader* pixelShader)
+void DX11QuadDrawer::RenderQuadHelper(ID3D11DeviceContext* pd3dDeviceContext, float* d_data, cudaGraphicsResource* pCuda, ID3D11ShaderResourceView* pTmpTextureSRV, unsigned int size, float scale, DirectX::XMFLOAT2 Pow2Ratios , ID3D11PixelShader* pixelShader)
 {
 	cudaArray* in_array;
 	cutilSafeCall(cudaGraphicsMapResources(1, &pCuda, 0)); // Map DX texture to Cuda
@@ -339,7 +339,7 @@ void DX11QuadDrawer::RenderQuadHelper(ID3D11DeviceContext* pd3dDeviceContext, fl
 	RenderQuad(pd3dDeviceContext, pTmpTextureSRV, scale, Pow2Ratios, pixelShader);
 }
 
-void DX11QuadDrawer::RenderQuad(ID3D11DeviceContext* pd3dDeviceContext, float* d_data, unsigned int nChannels, unsigned int width, unsigned int height, float scale /*= 1.0f */, D3DXVECTOR2 Pow2Ratios /*= float2(1.0f, 1.0f)*/, ID3D11PixelShader* pixelShader /*= NULL*/)
+void DX11QuadDrawer::RenderQuad(ID3D11DeviceContext* pd3dDeviceContext, float* d_data, unsigned int nChannels, unsigned int width, unsigned int height, float scale /*= 1.0f */, DirectX::XMFLOAT2 Pow2Ratios /*= float2(1.0f, 1.0f)*/, ID3D11PixelShader* pixelShader /*= NULL*/)
 {
 	if(nChannels == 4)
 	{
@@ -359,7 +359,7 @@ void DX11QuadDrawer::RenderQuad(ID3D11DeviceContext* pd3dDeviceContext, float* d
 	}
 }
 
-void DX11QuadDrawer::RenderQuad(ID3D11DeviceContext* pd3dDeviceContext, ID3D11ShaderResourceView* srv, float scale /*= 1.0f */, D3DXVECTOR2 Pow2Ratios /*= float2(1.0f, 1.0f)*/, ID3D11PixelShader* pixelShader /*= NULL*/)
+void DX11QuadDrawer::RenderQuad(ID3D11DeviceContext* pd3dDeviceContext, ID3D11ShaderResourceView* srv, float scale /*= 1.0f */, DirectX::XMFLOAT2 Pow2Ratios /*= float2(1.0f, 1.0f)*/, ID3D11PixelShader* pixelShader /*= NULL*/)
 {
 	D3D11_MAPPED_SUBRESOURCE MappedResource;
 	pd3dDeviceContext->Map( s_pcbVSPowTwoRatios, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource );
@@ -412,7 +412,7 @@ void DX11QuadDrawer::RenderQuad(ID3D11DeviceContext* pd3dDeviceContext, ID3D11Sh
 	pd3dDeviceContext->PSSetShaderResources(10, 1, srvNULL);
 }
 
-void DX11QuadDrawer::RenderQuad( ID3D11DeviceContext* pd3dDeviceContext, ID3D11PixelShader* pixelShader, ID3D11ShaderResourceView** srvs, UINT numShaderResourceViews, D3DXVECTOR2 Pow2Ratios /*= float2(1.0f, 1.0f)*/ )
+void DX11QuadDrawer::RenderQuad( ID3D11DeviceContext* pd3dDeviceContext, ID3D11PixelShader* pixelShader, ID3D11ShaderResourceView** srvs, UINT numShaderResourceViews, DirectX::XMFLOAT2 Pow2Ratios /*= float2(1.0f, 1.0f)*/ )
 {
 	D3D11_MAPPED_SUBRESOURCE MappedResource;
 	pd3dDeviceContext->Map( s_pcbVSPowTwoRatios, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource );

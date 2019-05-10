@@ -979,23 +979,22 @@ void __global__ ComputeOrientation_Kernel(float4* d_list,
 	//filter the vote
 	const float one_third = 1.0 / 3.0;
 	__shared__ float vote_tmp[36];
-	if (tidx < 36) {
-		volatile float* source = vote;
-		volatile float* target = vote_tmp;
+
+  volatile float* source = vote;
+  volatile float* target = vote_tmp;
 #pragma unroll
-		for (int i = 0; i < 6; i++) {
-			const unsigned int m = (tidx + 36 - 1) % 36;
-			const unsigned int c = (tidx);
-			const unsigned int p = (tidx + 1) % 36;
-			target[tidx] = (source[m] + source[c] + source[p])*one_third;
+  for (int i = 0; i < 6; i++) {
+    const unsigned int m = (tidx + 36 - 1) % 36;
+    const unsigned int c = (tidx);
+    const unsigned int p = (tidx + 1) % 36;
+    if (tidx < 36) 
+      target[tidx] = (source[m] + source[c] + source[p])*one_third;
 
-			__syncthreads();
-			volatile float *tmp = source;
-			source = target;
-			target = tmp;
-		}
-
-	}
+    __syncthreads();
+    volatile float *tmp = source;
+    source = target;
+    target = tmp;
+  }
 
 	//		if (num_orientation == 1)
 	//		{
@@ -1022,7 +1021,7 @@ void __global__ ComputeOrientation_Kernel(float4* d_list,
 
 	//__syncthreads(); <- not quite sure if we need that ( probably not )
 
-	max_vote = warpReduceMax(max_vote);
+  max_vote = warpReduceMax(max_vote);
 
 	const unsigned int numWarps = (COMPUTE_ORIENTATION_BLOCK + 32 - 1) / 32;
 	__shared__ float sMax[numWarps];
@@ -1036,9 +1035,8 @@ void __global__ ComputeOrientation_Kernel(float4* d_list,
 		__syncthreads();
 	}
 
-
-
 	max_vote = sMax[0];
+
 	float vote_threshold = max_vote * 0.8f;
 
 
@@ -1100,8 +1098,8 @@ void __global__ ComputeOrientation_Kernel(float4* d_list,
 	__syncthreads();
 	if (tidx == 0) {
 		weights[maxIndex] = -1.0f;
-		__syncthreads();
 	}
+  __syncthreads();
 
 	// 2nd reduction to compute 2nd max weight
 	for (unsigned int stride = COMPUTE_ORIENTATION_BLOCK / 2; stride > 0; stride /= 2) {

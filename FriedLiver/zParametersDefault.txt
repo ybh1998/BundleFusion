@@ -1,5 +1,5 @@
 // 0=Kinect; 1=PrimeSense; 2=KinectOne; 3=BinaryDumpReader; 4=NetworkSensor; 5=IntelSensor; 6=RealSense; 7=StructureSensor; 8=SensorDataReader (for offline processing)
-s_sensorIdx = 7;
+s_sensorIdx = 8;
 
 s_numSolveFramesBeforeExit = 30;//-1 //#frames to run after solve done, then saves and exits; -1 to stop after no more reintegration ops
 
@@ -45,8 +45,8 @@ s_SDFIntegrationWeightSample = 1;		//weight for an integrated depth value
 s_SDFIntegrationWeightMax = 99999999;	//maximum integration weight for a voxel
 // s_SDFBlockSize is pound defined (SDF_BLOCK_SIZE)
 // s_hashBucketSize is pound defined (HASH_BUCKET_SIZE)
-s_hashNumBuckets = 800000;				//smaller voxels require more space
-s_hashNumSDFBlocks = 200000;//100000;	//smaller voxels require more space
+s_hashNumBuckets = 400000;				//smaller voxels require more space
+s_hashNumSDFBlocks = 100000;//100000;	//smaller voxels require more space
 s_hashMaxCollisionLinkedListSize = 7;
 
 // raycast

@@ -10,10 +10,10 @@
 
 struct CB_RGBDRenderer
 {
-	D3DXMATRIX		m_mIntrinsicInverse;
-	D3DXMATRIX		m_mExtrinsic;			//model-view
-	D3DXMATRIX		m_mIntrinsicNew;		//for 'real-world' depth range
-	D3DXMATRIX		m_mProjection;			//for graphics rendering
+	DirectX::XMFLOAT4X4		m_mIntrinsicInverse;
+	DirectX::XMFLOAT4X4		m_mExtrinsic;			//model-view
+	DirectX::XMFLOAT4X4		m_mIntrinsicNew;		//for 'real-world' depth range
+	DirectX::XMFLOAT4X4		m_mProjection;			//for graphics rendering
 
 	unsigned int	m_uScreenWidth;
 	unsigned int	m_uScreenHeight;

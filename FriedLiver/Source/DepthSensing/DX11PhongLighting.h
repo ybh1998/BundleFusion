@@ -10,28 +10,28 @@ class DX11PhongLighting
 		
 		struct ConstantBufferLight : ConstantBufferBase<ConstantBufferLight>
 		{
-			D3DXVECTOR4 lightAmbient;
-			D3DXVECTOR4 lightDiffuse;
-			D3DXVECTOR4 lightSpecular;
+			DirectX::XMFLOAT4 lightAmbient;
+			DirectX::XMFLOAT4 lightDiffuse;
+			DirectX::XMFLOAT4 lightSpecular;
 
-			D3DXVECTOR3 lightDirection;
+			DirectX::XMFLOAT3 lightDirection;
 			float materialShininess;
 
-			D3DXVECTOR4 materialAmbient;
-			D3DXVECTOR4 materialSpecular;
-			D3DXVECTOR4 materialDiffuse;
+			DirectX::XMFLOAT4 materialAmbient;
+			DirectX::XMFLOAT4 materialSpecular;
+			DirectX::XMFLOAT4 materialDiffuse;
 
 			void SetDefault() {
 				// default light settings
-				lightAmbient		= D3DXVECTOR4(GlobalAppState::get().s_lightAmbient.getData());
-				lightDiffuse		= D3DXVECTOR4(GlobalAppState::get().s_lightDiffuse.getData());
-				lightSpecular		= D3DXVECTOR4(GlobalAppState::get().s_lightSpecular.getData());
-				lightDirection		= D3DXVECTOR3(GlobalAppState::get().s_lightDirection.getData());
+				lightAmbient		= DirectX::XMFLOAT4(GlobalAppState::get().s_lightAmbient.getData());
+				lightDiffuse		= DirectX::XMFLOAT4(GlobalAppState::get().s_lightDiffuse.getData());
+				lightSpecular		= DirectX::XMFLOAT4(GlobalAppState::get().s_lightSpecular.getData());
+				lightDirection		= DirectX::XMFLOAT3(GlobalAppState::get().s_lightDirection.getData());
 
 
-				materialAmbient   = D3DXVECTOR4(GlobalAppState::get().s_materialAmbient.getData());
-				materialSpecular  = D3DXVECTOR4(GlobalAppState::get().s_materialSpecular.getData());
-				materialDiffuse	  = D3DXVECTOR4(GlobalAppState::get().s_materialDiffuse.getData());
+				materialAmbient   = DirectX::XMFLOAT4(GlobalAppState::get().s_materialAmbient.getData());
+				materialSpecular  = DirectX::XMFLOAT4(GlobalAppState::get().s_materialSpecular.getData());
+				materialDiffuse	  = DirectX::XMFLOAT4(GlobalAppState::get().s_materialDiffuse.getData());
 				materialShininess = GlobalAppState::get().s_materialShininess;
 			}
 		};
@@ -71,7 +71,7 @@ private:
 	struct cbConstant
 	{
 		unsigned int useMaterial;
-		D3DXVECTOR3 overlayColor;
+		DirectX::XMFLOAT3 overlayColor;
 	};
 
 	static ID3D11Buffer* s_ConstantBuffer;

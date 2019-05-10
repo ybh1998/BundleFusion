@@ -193,7 +193,7 @@ void SiftPyramid::RunSIFT(float* d_colorData, const float* d_depthData)
 	if (GlobalUtil::_EnableDetailedTimings) {
 		_timer->startEvent("GetFeatureOrientations");
 	}
-	GetFeatureOrientations();
+ 	GetFeatureOrientations();
 	if (GlobalUtil::_EnableDetailedTimings) {
 		_timer->endEvent();
 	}
