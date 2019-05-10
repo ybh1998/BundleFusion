@@ -4,7 +4,7 @@
 
 This is a modern port for [BundleFusion](http://graphics.stanford.edu/projects/bundlefusion/). Since DirectX SDK has been deprecated and Nvidia changed some CUDA apis, original BundleFusion code would not run smoothly on latest platforms. For example, code compiled in VS2017 does not run in Release mode. Also, the original code hangs on GPU synchronize function if you use new volta/turing GPUs.
 
-The license is the same with original BundleFusion. (Please see [License.txt](License.txt)).
+The license is the same with original BundleFusion. (Please see [License.txt](LICENSE.txt)).
 
 ## Installation
 The modified code was tested under VS2017 with CUDA10.1 and a RTX2060.
