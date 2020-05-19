@@ -1,3 +1,4 @@
-[submodule "external/mLib"]
-	path = external/mLib
-	url = https://github.com/niessner/mLib.git
+[submodule "external/eigen"]
+	path = external/eigen
+	url = https://gitlab.com/libeigen/eigen.git
+	branch = 3.2.10
