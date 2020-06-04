@@ -7,8 +7,8 @@ s_sendUplinkFeedbackImage = true;
 
 s_recordSolverConvergence = false;
 
-s_enablePerFrameTimings = false;
-s_enableGlobalTimings = false;
+s_enablePerFrameTimings = true;
+s_enableGlobalTimings = true;
 
 s_widthSIFT = 640;
 s_heightSIFT = 480;
@@ -24,7 +24,7 @@ s_denseNormalThresh = 0.97f;
 s_denseColorThresh = 0.1f;
 s_denseColorGradientMin = 0.005f;
 s_denseDepthMin = 0.5f;
-s_denseDepthMax = 4.0f;
+s_denseDepthMax = 5.0f;
 s_denseOverlapCheckSubsampleFactor = 4;
 
 s_maxNumImages = 1200;

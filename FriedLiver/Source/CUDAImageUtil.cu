@@ -194,8 +194,13 @@ void CUDAImageUtil::resampleUCHAR4(uchar4* d_output, unsigned int outputWidth, u
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 __host__ __device__
+float convertToIntensity(const float4& c) {
+	return (0.299f * c.x + 0.587f * c.y + 0.114f * c.z);
+}
+
+__host__ __device__
 float convertToIntensity(const uchar4& c) {
-	return (0.299f*c.x + 0.587f*c.y + 0.114f*c.z) / 255.0f;
+	return (0.299f * c.x + 0.587f * c.y + 0.114f * c.z) / 255.0f;
 }
 
 __global__ void convertUCHAR4ToIntensityFloat_Kernel(float* d_output, const uchar4* d_input, unsigned int width, unsigned int height)
@@ -221,7 +226,7 @@ void CUDAImageUtil::convertUCHAR4ToIntensityFloat(float* d_output, const uchar4*
 #endif
 }
 
-__global__ void resampleToIntensity_Kernel(float* d_output, unsigned int outputWidth, unsigned int outputHeight, const uchar4* d_input, unsigned int inputWidth, unsigned int inputHeight)
+__global__ void resampleToIntensity_Kernel(float* d_output, unsigned int outputWidth, unsigned int outputHeight, const float4* d_input, unsigned int inputWidth, unsigned int inputHeight)
 {
 	const unsigned int x = blockIdx.x*blockDim.x + threadIdx.x;
 	const unsigned int y = blockIdx.y*blockDim.y + threadIdx.y;
@@ -240,7 +245,7 @@ __global__ void resampleToIntensity_Kernel(float* d_output, unsigned int outputW
 	}
 }
 
-void CUDAImageUtil::resampleToIntensity(float* d_output, unsigned int outputWidth, unsigned int outputHeight, const uchar4* d_input, unsigned int inputWidth, unsigned int inputHeight) {
+void CUDAImageUtil::resampleToIntensity(float* d_output, unsigned int outputWidth, unsigned int outputHeight, const float4* d_input, unsigned int inputWidth, unsigned int inputHeight) {
 
 	const dim3 gridSize((outputWidth + T_PER_BLOCK - 1) / T_PER_BLOCK, (outputHeight + T_PER_BLOCK - 1) / T_PER_BLOCK);
 	const dim3 blockSize(T_PER_BLOCK, T_PER_BLOCK);

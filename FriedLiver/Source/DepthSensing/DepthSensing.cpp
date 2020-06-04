@@ -298,7 +298,7 @@ cs.m_trajectory.resize(cs.m_DepthNumFrames);
 tm->lockUpdateTransforms();
 for (unsigned int i = 0; i < numFrames; i++) {
 const float* depth = g_CudaImageManager->getIntegrateFrame(i).getDepthFrameCPU();
-const uchar4* color = g_CudaImageManager->getIntegrateFrame(i).getColorFrameCPU();
+const float4* color = g_CudaImageManager->getIntegrateFrame(i).getColorFrameCPU();
 
 cs.m_DepthImages[i] = (float*)depth;	// this non-const cast is hacky
 cs.m_ColorImages[i] = (vec4uc*)color;	// this non-const cast is hacky
@@ -836,8 +836,8 @@ void visualizeFrame(ID3D11DeviceContext* pd3dImmediateContext, ID3D11Device* pd3
 	}
 	else if (GlobalAppState::get().s_RenderMode == 3) {
 		//color input
-		const uchar4* d_color = g_CudaImageManager->getLastIntegrateFrame().getColorFrameGPU();
-		DX11QuadDrawer::RenderQuadDynamicUCHAR4(DXUTGetD3D11Device(), pd3dImmediateContext, d_color, g_CudaImageManager->getIntegrationWidth(), g_CudaImageManager->getIntegrationHeight());
+		const float4* d_color = g_CudaImageManager->getLastIntegrateFrame().getColorFrameGPU();
+		DX11QuadDrawer::RenderQuadDynamic(DXUTGetD3D11Device(), pd3dImmediateContext, (const float*)d_color, 4, g_CudaImageManager->getIntegrationWidth(), g_CudaImageManager->getIntegrationHeight());
 	}
 	else if (GlobalAppState::get().s_RenderMode == 4) {
 		const float* d_depth = g_CudaImageManager->getLastIntegrateFrame().getDepthFrameGPU();

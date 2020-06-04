@@ -52,8 +52,8 @@ public:
 	const float*	getDepthFloat() const;
 
 	//! gets the pointer to color array
-	vec4uc*			getColorRGBX();
-	const vec4uc*	getColorRGBX() const;
+	vec4f*			getColorRGBX();
+	const vec4f*	getColorRGBX() const;
 
 	unsigned int getColorWidth() const;
 	unsigned int getColorHeight() const;
@@ -116,7 +116,7 @@ protected:
 	mat4f m_colorExtrinsicsInv;
 
 	std::vector<float*> m_depthFloat;
-	vec4uc*				m_colorRGBX;
+	vec4f*				m_colorRGBX;
 
 	LONG   m_depthWidth;
 	LONG   m_depthHeight;
@@ -140,7 +140,7 @@ private:
 	bool m_bUseModernSensFilesForRecording;
 
 	std::list<float*> m_recordedDepthData;
-	std::list<vec4uc*> m_recordedColorData;
+	std::list<vec4f*> m_recordedColorData;
 
 	std::vector<PointCloudf> m_recordedPoints;
 

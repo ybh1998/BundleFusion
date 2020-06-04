@@ -42,9 +42,9 @@ using namespace DirectX;
 
 #define DXUT_MAX_GUI_SPRITES 500
 
-inline DirectX::XMFLOAT4 D3DCOLOR_TO_D3DCOLORVALUE( DWORD c )
+inline XMFLOAT4 D3DCOLOR_TO_D3DCOLORVALUE( DWORD c )
 {
-    return DirectX::XMFLOAT4 ( ( ( c >> 16 ) & 0xFF ) / 255.0f,
+    return XMFLOAT4 ( ( ( c >> 16 ) & 0xFF ) / 255.0f,
                       ( ( c >> 8 ) & 0xFF ) / 255.0f,
                       ( c & 0xFF ) / 255.0f,
                       ( ( c >> 24 ) & 0xFF ) / 255.0f );
@@ -183,7 +183,7 @@ struct DXUT_SCREEN_VERTEX_UNTEX
 struct DXUT_SCREEN_VERTEX_10
 {
     float x, y, z;
-    DirectX::XMFLOAT4 color;
+    XMFLOAT4 color;
     float tu, tv;
 };
 
@@ -241,7 +241,7 @@ void BeginText11()
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_
 void DrawText11DXUT( ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3d11DeviceContext,
-                 LPCWSTR strText, const RECT& rcScreen, DirectX::XMFLOAT4 vFontColor,
+                 LPCWSTR strText, const RECT& rcScreen, XMFLOAT4 vFontColor,
                  float fBBWidth, float fBBHeight, bool bCenter )
 {
     float fCharTexSizeX = 0.010526315f;
@@ -295,34 +295,34 @@ void DrawText11DXUT( ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3d11Device
         float fTexRight = fTexLeft + fCharTexSizeX;
 
         // tri1
-        SpriteVertex.vPos = DirectX::XMFLOAT3( fRectLeft, fRectTop, fDepth );
-        SpriteVertex.vTex = DirectX::XMFLOAT2( fTexLeft, fTexTop );
+        SpriteVertex.vPos = XMFLOAT3( fRectLeft, fRectTop, fDepth );
+        SpriteVertex.vTex = XMFLOAT2( fTexLeft, fTexTop );
         SpriteVertex.vColor = vFontColor;
         g_FontVertices.push_back( SpriteVertex );
 
-        SpriteVertex.vPos = DirectX::XMFLOAT3( fRectRight, fRectTop, fDepth );
-        SpriteVertex.vTex = DirectX::XMFLOAT2( fTexRight, fTexTop );
+        SpriteVertex.vPos = XMFLOAT3( fRectRight, fRectTop, fDepth );
+        SpriteVertex.vTex = XMFLOAT2( fTexRight, fTexTop );
         SpriteVertex.vColor = vFontColor;
         g_FontVertices.push_back( SpriteVertex );
 
-        SpriteVertex.vPos = DirectX::XMFLOAT3( fRectLeft, fRectBottom, fDepth );
-        SpriteVertex.vTex = DirectX::XMFLOAT2( fTexLeft, fTexBottom );
+        SpriteVertex.vPos = XMFLOAT3( fRectLeft, fRectBottom, fDepth );
+        SpriteVertex.vTex = XMFLOAT2( fTexLeft, fTexBottom );
         SpriteVertex.vColor = vFontColor;
         g_FontVertices.push_back( SpriteVertex );
 
         // tri2
-        SpriteVertex.vPos = DirectX::XMFLOAT3( fRectRight, fRectTop, fDepth );
-        SpriteVertex.vTex = DirectX::XMFLOAT2( fTexRight, fTexTop );
+        SpriteVertex.vPos = XMFLOAT3( fRectRight, fRectTop, fDepth );
+        SpriteVertex.vTex = XMFLOAT2( fTexRight, fTexTop );
         SpriteVertex.vColor = vFontColor;
         g_FontVertices.push_back( SpriteVertex );
 
-        SpriteVertex.vPos = DirectX::XMFLOAT3( fRectRight, fRectBottom, fDepth );
-        SpriteVertex.vTex = DirectX::XMFLOAT2( fTexRight, fTexBottom );
+        SpriteVertex.vPos = XMFLOAT3( fRectRight, fRectBottom, fDepth );
+        SpriteVertex.vTex = XMFLOAT2( fTexRight, fTexBottom );
         SpriteVertex.vColor = vFontColor;
         g_FontVertices.push_back( SpriteVertex );
 
-        SpriteVertex.vPos = DirectX::XMFLOAT3( fRectLeft, fRectBottom, fDepth );
-        SpriteVertex.vTex = DirectX::XMFLOAT2( fTexLeft, fTexBottom );
+        SpriteVertex.vPos = XMFLOAT3( fRectLeft, fRectBottom, fDepth );
+        SpriteVertex.vTex = XMFLOAT2( fTexLeft, fTexBottom );
         SpriteVertex.vColor = vFontColor;
         g_FontVertices.push_back( SpriteVertex );
 
@@ -1650,34 +1650,34 @@ HRESULT CDXUTDialog::DrawSprite( CDXUTElement* pElement, const RECT* prcDest, fl
     DXUTSpriteVertex SpriteVertex = {};
 
     // tri1
-    SpriteVertex.vPos = DirectX::XMFLOAT3( fRectLeft, fRectTop, fDepth );
-    SpriteVertex.vTex = DirectX::XMFLOAT2( fTexLeft, fTexTop );
+    SpriteVertex.vPos = XMFLOAT3( fRectLeft, fRectTop, fDepth );
+    SpriteVertex.vTex = XMFLOAT2( fTexLeft, fTexTop );
     SpriteVertex.vColor = pElement->TextureColor.Current;
     m_pManager->m_SpriteVertices.push_back( SpriteVertex );
 
-    SpriteVertex.vPos = DirectX::XMFLOAT3( fRectRight, fRectTop, fDepth );
-    SpriteVertex.vTex = DirectX::XMFLOAT2( fTexRight, fTexTop );
+    SpriteVertex.vPos = XMFLOAT3( fRectRight, fRectTop, fDepth );
+    SpriteVertex.vTex = XMFLOAT2( fTexRight, fTexTop );
     SpriteVertex.vColor = pElement->TextureColor.Current;
     m_pManager->m_SpriteVertices.push_back( SpriteVertex );
 
-    SpriteVertex.vPos = DirectX::XMFLOAT3( fRectLeft, fRectBottom, fDepth );
-    SpriteVertex.vTex = DirectX::XMFLOAT2( fTexLeft, fTexBottom );
+    SpriteVertex.vPos = XMFLOAT3( fRectLeft, fRectBottom, fDepth );
+    SpriteVertex.vTex = XMFLOAT2( fTexLeft, fTexBottom );
     SpriteVertex.vColor = pElement->TextureColor.Current;
     m_pManager->m_SpriteVertices.push_back( SpriteVertex );
 
     // tri2
-    SpriteVertex.vPos = DirectX::XMFLOAT3( fRectRight, fRectTop, fDepth );
-    SpriteVertex.vTex = DirectX::XMFLOAT2( fTexRight, fTexTop );
+    SpriteVertex.vPos = XMFLOAT3( fRectRight, fRectTop, fDepth );
+    SpriteVertex.vTex = XMFLOAT2( fTexRight, fTexTop );
     SpriteVertex.vColor = pElement->TextureColor.Current;
     m_pManager->m_SpriteVertices.push_back( SpriteVertex );
 
-    SpriteVertex.vPos = DirectX::XMFLOAT3( fRectRight, fRectBottom, fDepth );
-    SpriteVertex.vTex = DirectX::XMFLOAT2( fTexRight, fTexBottom );
+    SpriteVertex.vPos = XMFLOAT3( fRectRight, fRectBottom, fDepth );
+    SpriteVertex.vTex = XMFLOAT2( fTexRight, fTexBottom );
     SpriteVertex.vColor = pElement->TextureColor.Current;
     m_pManager->m_SpriteVertices.push_back( SpriteVertex );
 
-    SpriteVertex.vPos = DirectX::XMFLOAT3( fRectLeft, fRectBottom, fDepth );
-    SpriteVertex.vTex = DirectX::XMFLOAT2( fTexLeft, fTexBottom );
+    SpriteVertex.vPos = XMFLOAT3( fRectLeft, fRectBottom, fDepth );
+    SpriteVertex.vTex = XMFLOAT2( fTexLeft, fTexBottom );
     SpriteVertex.vColor = pElement->TextureColor.Current;
     m_pManager->m_SpriteVertices.push_back( SpriteVertex );
 
@@ -1732,14 +1732,14 @@ HRESULT CDXUTDialog::DrawText( LPCWSTR strText, CDXUTElement* pElement, const RE
         RECT rcShadow = rcScreen;
         OffsetRect( &rcShadow, 1, 1 );
 
-        DirectX::XMFLOAT4 vShadowColor( 0,0,0, 1.0f );
+        XMFLOAT4 vShadowColor( 0,0,0, 1.0f );
         DrawText11DXUT( pd3dDevice, pd3d11DeviceContext,
                  strText, rcShadow, vShadowColor,
                  fBBWidth, fBBHeight, bCenter );
 
     }
 
-    DirectX::XMFLOAT4 vFontColor( pElement->FontColor.Current.x, pElement->FontColor.Current.y, pElement->FontColor.Current.z, 1.0f );
+    XMFLOAT4 vFontColor( pElement->FontColor.Current.x, pElement->FontColor.Current.y, pElement->FontColor.Current.z, 1.0f );
     DrawText11DXUT( pd3dDevice, pd3d11DeviceContext,
              strText, rcScreen, vFontColor,
              fBBWidth, fBBHeight, bCenter );
@@ -6630,7 +6630,7 @@ void DXUTBlendColor::Init( DWORD defaultColor, DWORD disabledColor, DWORD hidden
 _Use_decl_annotations_
 void DXUTBlendColor::Blend( UINT iState, float fElapsedTime, float fRate )
 {
-    DirectX::XMFLOAT4 destColor = D3DCOLOR_TO_D3DCOLORVALUE( States[ iState ] );
+    XMFLOAT4 destColor = D3DCOLOR_TO_D3DCOLORVALUE( States[ iState ] );
     XMVECTOR clr1 = XMLoadFloat4( &destColor );
     XMVECTOR clr = XMLoadFloat4( &Current );
     clr = XMVectorLerp( clr, clr1, 1.0f - powf( fRate, 30 * fElapsedTime ) );

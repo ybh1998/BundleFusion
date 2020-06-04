@@ -128,12 +128,14 @@ bool BinaryDumpReader::processDepth()
 	if(GlobalAppState::get().s_playData) {
 
 		float* depth = getDepthFloat();
+		vec4uc color;
 		memcpy(depth, m_data.m_DepthImages[m_CurrFrame], sizeof(float)*getDepthWidth()*getDepthHeight());
 
 		incrementRingbufIdx();
 
 		if (m_bHasColorData) {
-			memcpy(m_colorRGBX, m_data.m_ColorImages[m_CurrFrame], sizeof(vec4uc)*getColorWidth()*getColorHeight());
+			memcpy(&color, m_data.m_ColorImages[m_CurrFrame], sizeof(vec4uc)*getColorWidth()*getColorHeight());
+			*m_colorRGBX = color / 255.0f;
 		}
 
 		m_CurrFrame++;

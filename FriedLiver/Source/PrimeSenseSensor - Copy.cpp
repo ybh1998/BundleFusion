@@ -29,6 +29,17 @@ PrimeSenseSensor::~PrimeSenseSensor()
 	m_colorStream.destroy();
 	m_device.close();
 	openni::OpenNI::shutdown();
+
+	/*openni::Recorder recorder;
+	recorder.create("test.oni");
+
+	recorder.attach(m_depthStream, false);
+	recorder.attach(m_colorStream, false);
+
+	recorder.start();
+	recorder.stop();
+
+	recorder.destroy();*/
 }
 
 void PrimeSenseSensor::createFirstConnected()
@@ -41,13 +52,9 @@ void PrimeSenseSensor::createFirstConnected()
 	std::cout << "After initialization: " << openni::OpenNI::getExtendedError() << std::endl;
 
 	// Create Device
-	std::string filename = GlobalAppState::getInstance().s_oniFile + ".oni";
-	printf("OpenNI Record File: %s\n", filename.c_str());
-	rc = m_device.open(filename.c_str());//m_device.open(deviceURI);
-	filename = GlobalAppState::getInstance().s_oniFile + "_frame_exp.txt";
-	record_exposure = fopen(filename.c_str(), "r");
-	filename = GlobalAppState::getInstance().s_oniFile + "_curve.txt";
-	FILE* record_curve = fopen(filename.c_str(), "r");
+	rc = m_device.open("../data/6.oni");//m_device.open(deviceURI);
+	record_exposure = fopen("../data/6_frame_exp.txt", "r");
+	FILE *record_curve = fopen("../data/6_curve.txt", "r");
 	for (int i = 0; i < 256; i++) {
 		fscanf(record_curve, "%f", curve + i);
 		curve[i] = exp(curve[i]);
@@ -103,8 +110,21 @@ void PrimeSenseSensor::createFirstConnected()
 		return;
 	}
 
-	m_colorStream.setMirroringEnabled(true);
-	m_depthStream.setMirroringEnabled(true);
+	m_colorStream.setMirroringEnabled(false);
+	m_depthStream.setMirroringEnabled(false);
+	openni::CameraSettings* cs = m_colorStream.getCameraSettings();
+
+	//cs->setAutoWhiteBalanceEnabled(false);
+	//cs->setAutoExposureEnabled(false);
+	//cs->setGain(1);
+	//cs->setExposure(10);
+	if (cs)
+	{
+		std::cout << "getGain: " << cs->getGain() << std::endl;
+		std::cout << "getExposure: " << cs->getExposure() << std::endl;
+		std::cout << "getAutoExposureEnabled: " << cs->getAutoExposureEnabled() << std::endl;
+		std::cout << "getAutoWhiteBalanceEnabled: " << cs->getAutoWhiteBalanceEnabled() << std::endl;
+	}
 
 	// Get Dimensions
 	m_depthVideoMode = m_depthStream.getVideoMode();
@@ -117,7 +137,7 @@ void PrimeSenseSensor::createFirstConnected()
 
 	RGBDSensor::init(depthWidth, depthHeight, colorWidth, colorHeight, 1);
 
-	m_streams = new openni::VideoStream * [2];
+	m_streams = new openni::VideoStream*[2];
 	m_streams[0] = &m_depthStream;
 	m_streams[1] = &m_colorStream;
 
@@ -138,44 +158,55 @@ void PrimeSenseSensor::createFirstConnected()
 	initializeColorIntrinsics(focalLengthX, focalLengthY, colorWidth / 2.0f, colorHeight / 2.0f);
 
 	initializeColorExtrinsics(mat4f::identity());
+
+	mat4f depthExtrinsics = mat4f::identity();
+	depthExtrinsics(0, 0) = 9.9991741106823473e-001; depthExtrinsics(0, 1) = 3.0752530258331304e-003; depthExtrinsics(0, 2) = -1.2478536028949385e-002;
+	depthExtrinsics(1, 0) = -3.0607678272497924e-003; depthExtrinsics(1, 1) = 9.9999461994140826e-001; depthExtrinsics(1, 2) = 1.1797408808971066e-003;
+	depthExtrinsics(2, 0) = 1.2482096895408091e-002; depthExtrinsics(2, 1) = -1.1414495457493831e-003; depthExtrinsics(2, 2) = 9.9992144408949846e-001;
+
+	//t[0] = -2.5331974929667012e+001;  t[1] = 6.1798287248283634e-001; t[2] = 3.8510108109251804e+000;
+	//t[0] /= 1000.0f; t[1] /= 1000.0f; t[2] /= 1000.0f;
+	//
+	//initializeDepthExtrinsics(R, t);
 }
 
 bool PrimeSenseSensor::processDepth()
 {
+
+	bool hr = true;
+
 	m_bDepthImageIsUpdated = false;
 	m_bDepthImageCameraIsUpdated = false;
 	m_bNormalImageCameraIsUpdated = false;
 
 	static int cnt = 0;
 	printf("primesense: %d\n", cnt++);
-	if (readDepthAndColor(getDepthFloat(), m_colorRGBX))
-	{
-		m_bDepthImageIsUpdated = true;
-		m_bDepthImageCameraIsUpdated = true;
-		m_bNormalImageCameraIsUpdated = true;
+	hr = readDepthAndColor(getDepthFloat(), m_colorRGBX);
 
-		m_bDepthReceived = true;
-		m_bColorReceived = true;
-		return true;
-	}
-	return false;
+	m_bDepthImageIsUpdated = true;
+	m_bDepthImageCameraIsUpdated = true;
+	m_bNormalImageCameraIsUpdated = true;
+
+	m_bDepthReceived = true;
+	m_bColorReceived = true;
+
+	return hr;
 }
 
-bool PrimeSenseSensor::readDepthAndColor(float* depthFloat, vec4f* colorRGBX)
+bool PrimeSenseSensor::readDepthAndColor(float* depthFloat, vec4uc* colorRGBX)
 {
 	bool hr = true;
-	int exposure = 0;
-	if (record_exposure) {
-		if (fscanf(record_exposure, "%d", &exposure) != 1)
-			return false;
-		printf("Exposure: %d\n", exposure);
-	}
-	if (exposure == 0) exposure = 16;
+
+	int changedIndex;
+	openni::Status rc;
+	do
+	{
+		Sleep(10);
+		rc = openni::OpenNI::waitForAnyStream(&m_streams[0], 1, &changedIndex, 0);
+	} while (rc != openni::STATUS_OK);
+
 	openni::Status sd = m_depthStream.readFrame(&m_depthFrame);
 	openni::Status sc = m_colorStream.readFrame(&m_colorFrame);
-
-	if (sd != openni::Status::STATUS_OK || sc != openni::Status::STATUS_OK)
-		return false;
 
 	assert(m_colorFrame.getWidth() == m_depthFrame.getWidth());
 	assert(m_colorFrame.getHeight() == m_depthFrame.getHeight());
@@ -187,31 +218,33 @@ bool PrimeSenseSensor::readDepthAndColor(float* depthFloat, vec4f* colorRGBX)
 	if (m_depthFrame.isValid() && m_colorFrame.isValid())
 	{
 		unsigned int width = m_depthFrame.getWidth();
-		unsigned int nPixels = m_depthFrame.getWidth() * m_depthFrame.getHeight();
+		unsigned int nPixels = m_depthFrame.getWidth()*m_depthFrame.getHeight();
 
-		for (unsigned int i = 0; i < nPixels; i++) {
-			const int x = i % width;
+		for (unsigned int i = 0; i < nPixels; i++)	{
+			const int x = i%width;
 			const int y = i / width;
-			const int src = y * width + (width - 1 - x);
+			const int src = y*width + (width - 1 - x);
 			const openni::DepthPixel& p = pDepth[src];
 
-			float dF = (float)p * 0.0001f;
-			//float dF = (float)p * 0.001f;
+			float dF = (float)p*0.00011f;
 			if (dF >= GlobalAppState::get().s_sensorDepthMin && dF <= GlobalAppState::get().s_sensorDepthMax) depthFloat[i] = dF;
 			else																	 depthFloat[i] = -std::numeric_limits<float>::infinity();
 		}
 		incrementRingbufIdx();
 	}
+	fscanf(record_exposure, "%d", &exposure);
+	printf("Exposure: %d\n", exposure);
+	if (exposure == 0) exposure = 16;
 	// check if we need to draw depth frame to texture
 	if (m_depthFrame.isValid() && m_colorFrame.isValid())
 	{
 		unsigned int width = m_colorFrame.getWidth();
 		unsigned int height = m_colorFrame.getHeight();
-		unsigned int nPixels = m_colorFrame.getWidth() * m_colorFrame.getHeight();
+		unsigned int nPixels = m_colorFrame.getWidth()*m_colorFrame.getHeight();
 
 		for (unsigned int i = 0; i < nPixels; i++)
 		{
-			const int x = i % width;
+			const int x = i%width;
 			const int y = i / width;
 
 			int y2 = 0;
@@ -221,36 +254,21 @@ bool PrimeSenseSensor::readDepthAndColor(float* depthFloat, vec4f* colorRGBX)
 			if (y2 >= 0 && y2 < (int)height)
 			{
 				//unsigned int Index1D = y2*width+x;
-				unsigned int Index1D = y2 * width + (width - 1 - x);	//x-flip here
+				unsigned int Index1D = y2*width + (width - 1 - x);	//x-flip here
 
 				const openni::RGB888Pixel& pixel = pImage[Index1D];
-				float b, g, r, w = 0;
-				w = max(w, min(pixel.b + 1, 256 - pixel.b));
-				w = max(w, min(pixel.g + 1, 256 - pixel.g));
-				w = max(w, min(pixel.r + 1, 256 - pixel.r));
-				w /= 256;
-				if (record_exposure)
-				{
-					b = curve[pixel.b] * 8 / exposure;
-					g = curve[pixel.g] * 8 / exposure;
-					r = curve[pixel.r] * 8 / exposure;
-				}
-				else {
-					b = pixel.r / 255.0f;
-					g = pixel.g / 255.0f;
-					r = pixel.b / 255.0f;
-				}
-				/* unsigned int c = 0;
+				float b, g, r;
+				b = curve[pixel.b] * 1500 / exposure;
+				g = curve[pixel.g] * 1500 / exposure;
+				r = curve[pixel.r] * 1500 / exposure;
+				unsigned int c = 0;
 				c |= min(b, 255);
 				c <<= 8;
 				c |= min(g, 255);
 				c <<= 8;
 				c |= min(r, 255);
-				c |= 0xFF000000; */
-				colorRGBX[y * width + x][0] = b;
-				colorRGBX[y * width + x][1] = g;
-				colorRGBX[y * width + x][2] = r;
-				colorRGBX[y * width + x][3] = w;
+				c |= 0xFF000000;
+				((LONG*)colorRGBX)[y * width + x] = c;
 			}
 		}
 	}

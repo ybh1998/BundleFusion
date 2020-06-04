@@ -234,8 +234,8 @@ HRESULT CDXUTSDKMesh::CreateFromMemory( ID3D11Device* pDev11,
                                         bool bCopyStatic,
                                         SDKMESH_CALLBACKS11* pLoaderCallbacks11 )
 {
-    DirectX::XMFLOAT3 lower; 
-    DirectX::XMFLOAT3 upper; 
+    XMFLOAT3 lower; 
+    XMFLOAT3 upper; 
     
     m_pDev11 = pDev11;
 
@@ -338,20 +338,20 @@ HRESULT CDXUTSDKMesh::CreateFromMemory( ID3D11Device* pDev11,
         LoadMaterials( pDev11, m_pMaterialArray, m_pMeshHeader->NumMaterials, pLoaderCallbacks11 );
 
     // Create a place to store our bind pose frame matrices
-    m_pBindPoseFrameMatrices = new (std::nothrow) DirectX::XMFLOAT4X4[ m_pMeshHeader->NumFrames ];
+    m_pBindPoseFrameMatrices = new (std::nothrow) XMFLOAT4X4[ m_pMeshHeader->NumFrames ];
     if( !m_pBindPoseFrameMatrices )
     {
         return E_OUTOFMEMORY;
     }
 
     // Create a place to store our transformed frame matrices
-    m_pTransformedFrameMatrices = new (std::nothrow) DirectX::XMFLOAT4X4[ m_pMeshHeader->NumFrames ];
+    m_pTransformedFrameMatrices = new (std::nothrow) XMFLOAT4X4[ m_pMeshHeader->NumFrames ];
     if( !m_pTransformedFrameMatrices )
     {
         return E_OUTOFMEMORY;
     }
 
-    m_pWorldPoseFrameMatrices = new (std::nothrow) DirectX::XMFLOAT4X4[ m_pMeshHeader->NumFrames ];
+    m_pWorldPoseFrameMatrices = new (std::nothrow) XMFLOAT4X4[ m_pMeshHeader->NumFrames ];
     if( !m_pWorldPoseFrameMatrices )
     {
         return E_OUTOFMEMORY;
@@ -412,7 +412,7 @@ HRESULT CDXUTSDKMesh::CreateFromMemory( ID3D11Device* pDev11,
                     current_ind = ind[vertind];
                 }
                 tris++;
-                DirectX::XMFLOAT3 *pt = (DirectX::XMFLOAT3*)&(verts[stride * current_ind]);
+                XMFLOAT3 *pt = (XMFLOAT3*)&(verts[stride * current_ind]);
                 if (pt->x < lower.x) {
                     lower.x = pt->x;
                 }
@@ -437,7 +437,7 @@ HRESULT CDXUTSDKMesh::CreateFromMemory( ID3D11Device* pDev11,
             //pd3dDeviceContext->DrawIndexed( IndexCount, IndexStart, VertexStart );
         }
 
-        DirectX::XMFLOAT3 half( ( upper.x - lower.x ) * 0.5f,
+        XMFLOAT3 half( ( upper.x - lower.x ) * 0.5f,
                        ( upper.y - lower.y ) * 0.5f,
                        ( upper.z - lower.z ) * 0.5f );
 
@@ -499,7 +499,7 @@ void CDXUTSDKMesh::TransformFrame( UINT iFrame, CXMMATRIX parentWorld, double fT
         auto pData = &pFrameData->pAnimationData[ iTick ];
 
         // turn it into a matrix (Ignore scaling for now)
-        DirectX::XMFLOAT3 parentPos = pData->Translation;
+        XMFLOAT3 parentPos = pData->Translation;
         XMMATRIX mTranslate = XMMatrixTranslation( parentPos.x, parentPos.y, parentPos.z );
 
         XMVECTOR quat = XMVectorSet( pData->Orientation.x, pData->Orientation.y, pData->Orientation.z, pData->Orientation.w );

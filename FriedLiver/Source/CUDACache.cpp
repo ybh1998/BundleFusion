@@ -43,7 +43,7 @@ CUDACache::CUDACache(unsigned int widthDepthInput, unsigned int heightDepthInput
 
 
 void CUDACache::storeFrame(const float* d_depth, unsigned int inputDepthWidth, unsigned int inputDepthHeight,
-	const uchar4* d_color, unsigned int inputColorWidth, unsigned int inputColorHeight)
+	const float4* d_color, unsigned int inputColorWidth, unsigned int inputColorHeight)
 {
 	CUDACachedFrame& frame = m_cache[m_currentFrame];
 	//depth

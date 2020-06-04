@@ -77,13 +77,13 @@ struct HashEntry
 struct Voxel {
 	float	sdf;		//signed distance function
 	float	weight;		//accumulated sdf weight
-	uchar4	color;		//color
+	float4	color;		//color
 
 	//unsigned short sdf;
 	//unsigned short weight;
 	//uchar4	color;
 
-	__device__ void operator=(const struct Voxel& v) {
+	/*__device__ void operator=(const struct Voxel& v) {
 		((int*)this)[0] = ((const int*)&v)[0];
 		((int*)this)[1] = ((const int*)&v)[1];
 		((int*)this)[2] = ((const int*)&v)[2];
@@ -93,7 +93,7 @@ struct Voxel {
 		//this needs align, which unfortunately is problematic as __align__(16) would require more memory...
 		//((long long*)this)[0] = ((const long long*)&v)[0];	//8 bytes
 		//((int*)this)[2] = ((const int*)&v)[2];				//4 bytes
-	}
+	}*/
 
 };
 
@@ -393,7 +393,7 @@ struct HashDataStruct {
 
 	__device__  
 	void deleteVoxel(Voxel& v) const {
-		v.color = make_uchar4(0,0,0,0);
+		v.color = make_float4(0,0,0,0);
 		v.weight = 0.0f;
 		v.sdf = 0.0f;
 	}

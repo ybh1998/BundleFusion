@@ -13,7 +13,7 @@ struct BundlerInputData {
 	mat4f					m_SIFTIntrinsicsInv;
 	//data
 	float*					d_inputDepthFilt, *d_inputDepthRaw;
-	uchar4*					d_inputColor;
+	float4*					d_inputColor;
 	float*					d_intensitySIFT;
 	float*					d_intensityFilterHelper; //TODO check if used
 	//filtering  //TODO option for depth filter
@@ -40,7 +40,7 @@ struct BundlerInputData {
 		MLIB_CUDA_SAFE_CALL(cudaMalloc(&d_inputDepthFilt, sizeof(float)*m_inputDepthWidth*m_inputDepthHeight));
 		MLIB_CUDA_SAFE_CALL(cudaMalloc(&d_inputDepthRaw, sizeof(float)*m_inputDepthWidth*m_inputDepthHeight));
 		MLIB_CUDA_SAFE_CALL(cudaMalloc(&d_intensityFilterHelper, sizeof(float)*m_widthSIFT*m_heightSIFT));
-		MLIB_CUDA_SAFE_CALL(cudaMalloc(&d_inputColor, sizeof(uchar4)*m_inputColorWidth*m_inputColorHeight));
+		MLIB_CUDA_SAFE_CALL(cudaMalloc(&d_inputColor, sizeof(float4)*m_inputColorWidth*m_inputColorHeight));
 		MLIB_CUDA_SAFE_CALL(cudaMalloc(&d_intensitySIFT, sizeof(float)*m_widthSIFT*m_heightSIFT));
 
 		m_SIFTIntrinsics = sensor->getColorIntrinsics();

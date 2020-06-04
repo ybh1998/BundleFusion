@@ -24,11 +24,11 @@ public:
 
 			if (!s_bIsOnGPU) {
 				MLIB_CUDA_SAFE_CALL(cudaMalloc(&s_depthIntegrationGlobal, sizeof(float)*width*height));
-				MLIB_CUDA_SAFE_CALL(cudaMalloc(&s_colorIntegrationGlobal, sizeof(uchar4)*width*height));
+				MLIB_CUDA_SAFE_CALL(cudaMalloc(&s_colorIntegrationGlobal, sizeof(float4)*width*height));
 			}
 			else {
 				s_depthIntegrationGlobal = new float[width*height];
-				s_colorIntegrationGlobal = new uchar4[width*height];
+				s_colorIntegrationGlobal = new float4[width*height];
 			}
 		}
 		static void globalFree()
@@ -47,11 +47,11 @@ public:
 		void alloc() {
 			if (s_bIsOnGPU) {
 				MLIB_CUDA_SAFE_CALL(cudaMalloc(&m_depthIntegration, sizeof(float)*s_width*s_height));
-				MLIB_CUDA_SAFE_CALL(cudaMalloc(&m_colorIntegration, sizeof(uchar4)*s_width*s_height));
+				MLIB_CUDA_SAFE_CALL(cudaMalloc(&m_colorIntegration, sizeof(float4)*s_width*s_height));
 			}
 			else {
 				m_depthIntegration = new float[s_width*s_height];
-				m_colorIntegration = new uchar4[s_width*s_height];
+				m_colorIntegration = new float4[s_width*s_height];
 			}
 		}
 
@@ -80,13 +80,13 @@ public:
 				return s_depthIntegrationGlobal;
 			}
 		}
-		const uchar4* getColorFrameGPU() {	//be aware that only one depth frame is globally valid at a time
+		const float4* getColorFrameGPU() {	//be aware that only one depth frame is globally valid at a time
 			if (s_bIsOnGPU) {
 				return m_colorIntegration;
 			}
 			else {
 				if (this != s_activeColorGPU) {
-					MLIB_CUDA_SAFE_CALL(cudaMemcpy(s_colorIntegrationGlobal, m_colorIntegration, sizeof(uchar4)*s_width*s_height, cudaMemcpyHostToDevice));
+					MLIB_CUDA_SAFE_CALL(cudaMemcpy(s_colorIntegrationGlobal, m_colorIntegration, sizeof(float4)*s_width*s_height, cudaMemcpyHostToDevice));
 					s_activeColorGPU = this;
 				}
 				return s_colorIntegrationGlobal;
@@ -105,10 +105,10 @@ public:
 				return m_depthIntegration;
 			}
 		}
-		const uchar4* getColorFrameCPU() {
+		const float4* getColorFrameCPU() {
 			if (s_bIsOnGPU) {
 				if (this != s_activeColorCPU) {
-					MLIB_CUDA_SAFE_CALL(cudaMemcpy(s_colorIntegrationGlobal, m_colorIntegration, sizeof(uchar4)*s_width*s_height, cudaMemcpyDeviceToHost));
+					MLIB_CUDA_SAFE_CALL(cudaMemcpy(s_colorIntegrationGlobal, m_colorIntegration, sizeof(float4)*s_width*s_height, cudaMemcpyDeviceToHost));
 					s_activeDepthCPU = this;
 				}
 				return s_colorIntegrationGlobal;
@@ -120,19 +120,19 @@ public:
 
 	private:
 		float*	m_depthIntegration;	//either on the GPU or CPU
-		uchar4*	m_colorIntegration;	//either on the GPU or CPU
+		float4*	m_colorIntegration;	//either on the GPU or CPU
 
 		static bool			s_bIsOnGPU;
 		static unsigned int s_width;
 		static unsigned int s_height;
 
 		static float*		s_depthIntegrationGlobal;
-		static uchar4*		s_colorIntegrationGlobal;
+		static float4*		s_colorIntegrationGlobal;
 		static ManagedRGBDInputFrame*	s_activeColorGPU;
 		static ManagedRGBDInputFrame*	s_activeDepthGPU;
 
 		static float*		s_depthIntegrationGlobalCPU;
-		static uchar4*		s_colorIntegrationGlobalCPU;
+		static float4*		s_colorIntegrationGlobalCPU;
 		static ManagedRGBDInputFrame*	s_activeColorCPU;
 		static ManagedRGBDInputFrame*	s_activeDepthCPU;
 	};
@@ -151,7 +151,7 @@ public:
 
 		MLIB_CUDA_SAFE_CALL(cudaMalloc(&d_depthInputRaw, sizeof(float)*bufferDimDepthInput));
 		MLIB_CUDA_SAFE_CALL(cudaMalloc(&d_depthInputFiltered, sizeof(float)*bufferDimDepthInput));
-		MLIB_CUDA_SAFE_CALL(cudaMalloc(&d_colorInput, sizeof(uchar4)*bufferDimColorInput));
+		MLIB_CUDA_SAFE_CALL(cudaMalloc(&d_colorInput, sizeof(float4)*bufferDimColorInput));
 
 		m_currFrame = 0;
 
@@ -220,10 +220,10 @@ public:
 
 	bool process();
 
-	void copyToBundling(float* d_depthRaw, float* d_depthFilt, uchar4* d_color) const {
+	void copyToBundling(float* d_depthRaw, float* d_depthFilt, float4* d_color) const {
 		MLIB_CUDA_SAFE_CALL(cudaMemcpy(d_depthRaw, d_depthInputRaw, sizeof(float)*m_RGBDSensor->getDepthWidth()* m_RGBDSensor->getDepthHeight(), cudaMemcpyDeviceToDevice));
 		MLIB_CUDA_SAFE_CALL(cudaMemcpy(d_depthFilt, d_depthInputFiltered, sizeof(float)*m_RGBDSensor->getDepthWidth()* m_RGBDSensor->getDepthHeight(), cudaMemcpyDeviceToDevice));
-		MLIB_CUDA_SAFE_CALL(cudaMemcpy(d_color, d_colorInput, sizeof(uchar4)*m_RGBDSensor->getColorWidth()*m_RGBDSensor->getColorHeight(), cudaMemcpyDeviceToDevice));
+		MLIB_CUDA_SAFE_CALL(cudaMemcpy(d_color, d_colorInput, sizeof(float4)*m_RGBDSensor->getColorWidth()*m_RGBDSensor->getColorHeight(), cudaMemcpyDeviceToDevice));
 	}
 
 
@@ -323,7 +323,7 @@ private:
 
 	//! temporary GPU storage for inputting the current frame
 	float*	d_depthInputRaw;
-	uchar4*	d_colorInput;
+	float4*	d_colorInput;
 	float*	d_depthInputFiltered;
 
 	unsigned int m_widthSIFTdepth;

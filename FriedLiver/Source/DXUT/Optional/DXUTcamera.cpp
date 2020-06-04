@@ -268,7 +268,7 @@ void CBaseCamera::SetViewParams( FXMVECTOR vEyePt, FXMVECTOR vLookatPt )
     // The axis basis vectors and camera position are stored inside the 
     // position matrix in the 4 rows of the camera's world matrix.
     // To figure out the yaw/pitch of the camera, we just need the Z basis vector
-    DirectX::XMFLOAT3 zBasis;
+    XMFLOAT3 zBasis;
     XMStoreFloat3( &zBasis, mInvView.r[2] );
 
     m_fCameraYawAngle = atan2f( zBasis.x, zBasis.z );
@@ -434,7 +434,7 @@ LRESULT CBaseCamera::HandleMessages( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 _Use_decl_annotations_
 void CBaseCamera::GetInput( bool bGetKeyboardInput, bool bGetMouseInput, bool bGetGamepadInput )
 {
-    m_vKeyboardDirection = DirectX::XMFLOAT3( 0, 0, 0 );
+    m_vKeyboardDirection = XMFLOAT3( 0, 0, 0 );
     if( bGetKeyboardInput )
     {
         // Update acceleration vector based on keyboard state
@@ -462,8 +462,8 @@ void CBaseCamera::GetInput( bool bGetKeyboardInput, bool bGetMouseInput, bool bG
 
     if( bGetGamepadInput )
     {
-        m_vGamePadLeftThumb = DirectX::XMFLOAT3( 0, 0, 0 );
-        m_vGamePadRightThumb = DirectX::XMFLOAT3( 0, 0, 0 );
+        m_vGamePadLeftThumb = XMFLOAT3( 0, 0, 0 );
+        m_vGamePadRightThumb = XMFLOAT3( 0, 0, 0 );
 
         // Get controller state
         for( DWORD iUserIndex = 0; iUserIndex < DXUT_MAX_CONTROLLERS; iUserIndex++ )
@@ -611,7 +611,7 @@ void CBaseCamera::UpdateVelocity( _In_ float fElapsedTime )
             else
             {
                 // Zero velocity
-                m_vVelocity = DirectX::XMFLOAT3( 0, 0, 0 );
+                m_vVelocity = XMFLOAT3( 0, 0, 0 );
             }
         }
     }
@@ -831,7 +831,7 @@ CModelViewerCamera::CModelViewerCamera() noexcept :
     XMStoreFloat4x4( &m_mModelRot, id );
     XMStoreFloat4x4( &m_mModelLastRot, id );
     XMStoreFloat4x4( &m_mCameraRotLast, id );
-    m_vModelCenter = DirectX::XMFLOAT3( 0, 0, 0 );
+    m_vModelCenter = XMFLOAT3( 0, 0, 0 );
 
     m_bEnablePositionMovement = false;
 }
@@ -1095,7 +1095,7 @@ CDXUTDirectionWidget::CDXUTDirectionWidget() noexcept :
     m_fRadius(1.0f),
     m_nRotateMask(MOUSE_RIGHT_BUTTON)
 {
-    m_vDefaultDir = DirectX::XMFLOAT3( 0, 1, 0 );
+    m_vDefaultDir = XMFLOAT3( 0, 1, 0 );
     m_vCurrentDir = m_vDefaultDir;
 
     XMMATRIX id = XMMatrixIdentity();

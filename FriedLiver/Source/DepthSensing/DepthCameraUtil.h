@@ -26,7 +26,7 @@ struct DepthCameraData {
 		d_colorData = NULL;
 	}
 
-	DepthCameraData(const float* depthData, const uchar4* colorData) {
+	DepthCameraData(const float* depthData, const float4* colorData) {
 		d_depthData = depthData;
 		d_colorData = colorData;
 	}
@@ -144,7 +144,7 @@ struct DepthCameraData {
 	}
 
 	const float*		d_depthData;	//depth data of the current frame (in screen space):: TODO data allocation lives in RGBD Sensor
-	const uchar4*		d_colorData;	//color data of the current frame (in screen space):: TODO data allocation lives in RGBD Sensor
+	const float4*		d_colorData;	//color data of the current frame (in screen space):: TODO data allocation lives in RGBD Sensor
 
 	//// cuda arrays for texture access
 	//cudaArray*	d_depthArray;

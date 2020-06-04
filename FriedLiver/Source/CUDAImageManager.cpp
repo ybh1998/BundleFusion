@@ -9,7 +9,7 @@ unsigned int CUDAImageManager::ManagedRGBDInputFrame::s_width = 0;
 unsigned int CUDAImageManager::ManagedRGBDInputFrame::s_height = 0;
 
 float*		CUDAImageManager::ManagedRGBDInputFrame::s_depthIntegrationGlobal = NULL;
-uchar4*		CUDAImageManager::ManagedRGBDInputFrame::s_colorIntegrationGlobal = NULL;
+float4*		CUDAImageManager::ManagedRGBDInputFrame::s_colorIntegrationGlobal = NULL;
 
 CUDAImageManager::ManagedRGBDInputFrame* CUDAImageManager::ManagedRGBDInputFrame::s_activeColorGPU = NULL;
 CUDAImageManager::ManagedRGBDInputFrame* CUDAImageManager::ManagedRGBDInputFrame::s_activeDepthGPU = NULL;
@@ -39,24 +39,23 @@ bool CUDAImageManager::process()
 	////////////////////////////////////////////////////////////////////////////////////
 
 	const unsigned int bufferDimColorInput = m_RGBDSensor->getColorWidth()*m_RGBDSensor->getColorHeight();
-	MLIB_CUDA_SAFE_CALL(cudaMemcpy(d_colorInput, m_RGBDSensor->getColorRGBX(), sizeof(uchar4)*bufferDimColorInput, cudaMemcpyHostToDevice));
-
+	MLIB_CUDA_SAFE_CALL(cudaMemcpy(d_colorInput, m_RGBDSensor->getColorRGBX(), sizeof(float4)*bufferDimColorInput, cudaMemcpyHostToDevice));
 	if ((m_RGBDSensor->getColorWidth() == m_widthIntegration) && (m_RGBDSensor->getColorHeight() == m_heightIntegration)) {
 		if (ManagedRGBDInputFrame::s_bIsOnGPU) {
-			CUDAImageUtil::copy<uchar4>(frame.m_colorIntegration, d_colorInput, m_widthIntegration, m_heightIntegration);
+			CUDAImageUtil::copy<float4>(frame.m_colorIntegration, d_colorInput, m_widthIntegration, m_heightIntegration);
 			//std::swap(frame.m_colorIntegration, d_colorInput);
 		}
 		else {
-			memcpy(frame.m_colorIntegration, m_RGBDSensor->getColorRGBX(), sizeof(uchar4)*bufferDimColorInput);
+			memcpy(frame.m_colorIntegration, m_RGBDSensor->getColorRGBX(), sizeof(float4)*bufferDimColorInput);
 		}
 	}
 	else {
 		if (ManagedRGBDInputFrame::s_bIsOnGPU) {
-			CUDAImageUtil::resampleUCHAR4(frame.m_colorIntegration, m_widthIntegration, m_heightIntegration, d_colorInput, m_RGBDSensor->getColorWidth(), m_RGBDSensor->getColorHeight());
+			CUDAImageUtil::resampleFloat4(frame.m_colorIntegration, m_widthIntegration, m_heightIntegration, d_colorInput, m_RGBDSensor->getColorWidth(), m_RGBDSensor->getColorHeight());
 		}
 		else {
-			CUDAImageUtil::resampleUCHAR4(frame.s_colorIntegrationGlobal, m_widthIntegration, m_heightIntegration, d_colorInput, m_RGBDSensor->getColorWidth(), m_RGBDSensor->getColorHeight());
-			MLIB_CUDA_SAFE_CALL(cudaMemcpy(frame.m_colorIntegration, frame.s_colorIntegrationGlobal, sizeof(uchar4)*m_widthIntegration*m_heightIntegration, cudaMemcpyDeviceToHost));
+			CUDAImageUtil::resampleFloat4(frame.s_colorIntegrationGlobal, m_widthIntegration, m_heightIntegration, d_colorInput, m_RGBDSensor->getColorWidth(), m_RGBDSensor->getColorHeight());
+			MLIB_CUDA_SAFE_CALL(cudaMemcpy(frame.m_colorIntegration, frame.s_colorIntegrationGlobal, sizeof(float4)*m_widthIntegration*m_heightIntegration, cudaMemcpyDeviceToHost));
 			frame.s_activeColorGPU = &frame;
 		}
 	}
@@ -67,7 +66,6 @@ bool CUDAImageManager::process()
 
 	const unsigned int bufferDimDepthInput = m_RGBDSensor->getDepthWidth()*m_RGBDSensor->getDepthHeight();
 	MLIB_CUDA_SAFE_CALL(cudaMemcpy(d_depthInputRaw, m_RGBDSensor->getDepthFloat(), sizeof(float)*m_RGBDSensor->getDepthWidth()* m_RGBDSensor->getDepthHeight(), cudaMemcpyHostToDevice));
-
 	////////////////////////////////////////////////////////////////////////////////////
 	// Render to Color Space
 	////////////////////////////////////////////////////////////////////////////////////
@@ -152,7 +150,6 @@ bool CUDAImageManager::process()
 	//CUDAImageUtil::resampleToIntensity(d_intensitySIFT, m_widthSIFT, m_heightSIFT, d_colorInput, m_RGBDSensor->getColorWidth(), m_RGBDSensor->getColorHeight());
 
 	if (GlobalBundlingState::get().s_enableGlobalTimings) { cudaDeviceSynchronize(); s_timer.stop(); TimingLog::getFrameTiming(true).timeSensorProcess = s_timer.getElapsedTimeMS(); }
-
 	m_currFrame++;
 	return true;
 }

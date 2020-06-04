@@ -10,7 +10,7 @@
 #define T_PER_BLOCK 8
 
 texture<float, cudaTextureType2D, cudaReadModeElementType> depthTextureRef;
-texture<uchar4, cudaTextureType2D, cudaReadModeElementType> colorTextureRef;
+texture<float4, cudaTextureType2D, cudaReadModeElementType> colorTextureRef;
 
 extern "C" void bindInputDepthColorTextures(const DepthCameraData& depthCameraData, unsigned int width, unsigned int height) 
 {
@@ -18,7 +18,7 @@ extern "C" void bindInputDepthColorTextures(const DepthCameraData& depthCameraDa
 	//cutilSafeCall(cudaBindTextureToArray(colorTextureRef, depthCameraData.d_colorArray, depthCameraData.h_colorChannelDesc));
 
 	cutilSafeCall(cudaBindTexture2D(0, depthTextureRef, depthCameraData.d_depthData, depthTextureRef.channelDesc, width, height, sizeof(float)*width));
-	cutilSafeCall(cudaBindTexture2D(0, colorTextureRef, depthCameraData.d_colorData, colorTextureRef.channelDesc, width, height, sizeof(uchar4)*width));
+	cutilSafeCall(cudaBindTexture2D(0, colorTextureRef, depthCameraData.d_colorData, colorTextureRef.channelDesc, width, height, sizeof(float4)*width));
 
 	depthTextureRef.filterMode = cudaFilterModePoint;
 	colorTextureRef.filterMode = cudaFilterModePoint;
@@ -399,12 +399,12 @@ inline __device__ float4 bilinearFilterColor(const float2& screenPos) {
 	const float beta  = (screenPos.y - p00.y)*dir.y;
 
 	float4 s0 = make_float4(0.0f, 0.0f, 0.0f, 0.0f); float w0 = 0.0f;
-	if (p00.x >= 0 && p00.x < imageWidth && p00.y >= 0 && p00.y < imageHeight) { uchar4 v00_uc = tex2D(colorTextureRef, p00.x, p00.y); float4 v00 = make_float4(v00_uc.x, v00_uc.y, v00_uc.z, v00_uc.w);	if (v00.x != MINF) { s0 += (1.0f - alpha)*v00; w0 += (1.0f - alpha); } }
-	if (p10.x >= 0 && p10.x < imageWidth && p10.y >= 0 && p10.y < imageHeight) { uchar4 v10_uc = tex2D(colorTextureRef, p10.x, p10.y); float4 v10 = make_float4(v10_uc.x, v10_uc.y, v10_uc.z, v10_uc.w);    if (v10.x != MINF) { s0 += alpha *v10; w0 += alpha; } }
+	if (p00.x >= 0 && p00.x < imageWidth && p00.y >= 0 && p00.y < imageHeight) { float4 v00_uc = tex2D(colorTextureRef, p00.x, p00.y); float4 v00 = make_float4(v00_uc.x, v00_uc.y, v00_uc.z, v00_uc.w);	if (v00.x != MINF) { s0 += (1.0f - alpha)*v00; w0 += (1.0f - alpha); } }
+	if (p10.x >= 0 && p10.x < imageWidth && p10.y >= 0 && p10.y < imageHeight) { float4 v10_uc = tex2D(colorTextureRef, p10.x, p10.y); float4 v10 = make_float4(v10_uc.x, v10_uc.y, v10_uc.z, v10_uc.w);    if (v10.x != MINF) { s0 += alpha *v10; w0 += alpha; } }
 
 	float4 s1 = make_float4(0.0f, 0.0f, 0.0f, 0.0f); float w1 = 0.0f;
-	if (p01.x >= 0 && p01.x < imageWidth && p01.y >= 0 && p01.y < imageHeight) { uchar4 v01_uc = tex2D(colorTextureRef, p01.x, p01.y); float4 v01 = make_float4(v01_uc.x, v01_uc.y, v01_uc.z, v01_uc.w);    if (v01.x != MINF) { s1 += (1.0f - alpha)*v01; w1 += (1.0f - alpha); } }
-	if (p11.x >= 0 && p11.x < imageWidth && p11.y >= 0 && p11.y < imageHeight) { uchar4 v11_uc = tex2D(colorTextureRef, p11.x, p11.y); float4 v11 = make_float4(v11_uc.x, v11_uc.y, v11_uc.z, v11_uc.w);    if (v11.x != MINF) { s1 += alpha *v11; w1 += alpha; } }
+	if (p01.x >= 0 && p01.x < imageWidth && p01.y >= 0 && p01.y < imageHeight) { float4 v01_uc = tex2D(colorTextureRef, p01.x, p01.y); float4 v01 = make_float4(v01_uc.x, v01_uc.y, v01_uc.z, v01_uc.w);    if (v01.x != MINF) { s1 += (1.0f - alpha)*v01; w1 += (1.0f - alpha); } }
+	if (p11.x >= 0 && p11.x < imageWidth && p11.y >= 0 && p11.y < imageHeight) { float4 v11_uc = tex2D(colorTextureRef, p11.x, p11.y); float4 v11 = make_float4(v11_uc.x, v11_uc.y, v11_uc.z, v11_uc.w);    if (v11.x != MINF) { s1 += alpha *v11; w1 += alpha; } }
 
 	const float4 p0 = s0/w0;
 	const float4 p1 = s1/w1;
@@ -438,12 +438,8 @@ __global__ void integrateDepthMapKernel(HashDataStruct hashData, DepthCameraData
 
 		//float depth = g_InputDepth[screenPos];
 		float depth = tex2D(depthTextureRef, screenPos.x, screenPos.y);
-		float4 color  = make_float4(MINF, MINF, MINF, MINF);
-		if (cameraData.d_colorData) {
-			uchar4 color_uc = tex2D(colorTextureRef, screenPos.x, screenPos.y);
-			color = make_float4(color_uc.x, color_uc.y, color_uc.z, color_uc.w);
-			//color = bilinearFilterColor(cameraData.cameraToKinectScreenFloat(pf));
-		}
+		float4 color  = tex2D(colorTextureRef, screenPos.x, screenPos.y);
+		//color = bilinearFilterColor(cameraData.cameraToKinectScreenFloat(pf));
 
 		if (color.x != MINF && depth != MINF) { // valid depth and color
 		//if (depth != MINF) {	//valid depth
@@ -470,9 +466,9 @@ __global__ void integrateDepthMapKernel(HashDataStruct hashData, DepthCameraData
 					curr.weight = weightUpdate;
 
 					if (cameraData.d_colorData) {
-						curr.color = make_uchar4(color.x, color.y, color.z, 255);
+						curr.color = make_float4(color.x, color.y, color.z, color.w);
 					} else {
-						curr.color = make_uchar4(0,255,0,0);
+						curr.color = make_float4(0,1.0f,0,0);
 					}
 
 					uint idx = entry.ptr + i;
@@ -481,39 +477,32 @@ __global__ void integrateDepthMapKernel(HashDataStruct hashData, DepthCameraData
 					Voxel newVoxel;
 
 					float3 oldColor = make_float3(oldVoxel.color.x, oldVoxel.color.y, oldVoxel.color.z);
+					float oldColorWeight = oldVoxel.color.w;
 					float3 currColor = make_float3(curr.color.x, curr.color.y, curr.color.z);
+					float currColorWeight = curr.color.w;
 
-					if (!deIntegrate) {	//integration
-						//hashData.combineVoxel(hashData.d_SDFBlocks[idx], curr, newVoxel);
-						float3 res;
-						if (oldVoxel.weight == 0) res = currColor;
-						//else res = (currColor + oldColor) / 2;
-						else res = 0.2f * currColor + 0.8f * oldColor;
-						//float3 res = (currColor*curr.weight + oldColor*oldVoxel.weight) / (curr.weight + oldVoxel.weight);
-						res = make_float3(round(res.x), round(res.y), round(res.z));
-						res = fmaxf(make_float3(0.0f), fminf(res, make_float3(254.5f)));
-						//newVoxel.color.x = (uchar)(res.x + 0.5f);	newVoxel.color.y = (uchar)(res.y + 0.5f);	newVoxel.color.z = (uchar)(res.z + 0.5f);
-						newVoxel.color = make_uchar4(res.x, res.y, res.z, 255);
+					if (!deIntegrate) {
+						float3 res = (oldColor * oldColorWeight + currColor * currColorWeight) / (oldColorWeight + currColorWeight);
+						float ColorWeight = oldColorWeight + currColorWeight;
+						newVoxel.color = make_float4(res.x, res.y, res.z, ColorWeight);
 						newVoxel.sdf = (curr.sdf*curr.weight + oldVoxel.sdf*oldVoxel.weight) / (curr.weight + oldVoxel.weight);
 						newVoxel.weight = min((float)c_hashParams.m_integrationWeightMax, curr.weight + oldVoxel.weight);
 					}
 					else {				//deintegration
-						//float3 res = 2 * c0 - c1;
-						float3 res = (oldColor*oldVoxel.weight - currColor*curr.weight) / (oldVoxel.weight - curr.weight);
-						res = make_float3(round(res.x), round(res.y), round(res.z));
-						res = fmaxf(make_float3(0.0f), fminf(res, make_float3(254.5f)));
-						//newVoxel.color.x = (uchar)(res.x + 0.5f);	newVoxel.color.y = (uchar)(res.y + 0.5f);	newVoxel.color.z = (uchar)(res.z + 0.5f);
-						newVoxel.color = make_uchar4(res.x, res.y, res.z, 255);
+						float3 res = (oldColor * oldColorWeight - currColor * currColorWeight) / (oldColorWeight - currColorWeight);
+						float ColorWeight = oldColorWeight - currColorWeight;
+						newVoxel.color = make_float4(res.x, res.y, res.z, ColorWeight);
 						newVoxel.sdf = (oldVoxel.sdf*oldVoxel.weight - curr.sdf*curr.weight) / (oldVoxel.weight - curr.weight);
 						newVoxel.weight = max(0.0f, oldVoxel.weight - curr.weight);
 						if (newVoxel.weight <= 0.001f) {
 							newVoxel.sdf = 0.0f;
-							newVoxel.color = make_uchar4(0,0,0,0);
+							newVoxel.color = make_float4(0,0,0,0);
 							newVoxel.weight = 0.0f;
 						}
 					}
 
 					hashData.d_SDFBlocks[idx] = newVoxel;
+					//printf("%f\n", newVoxel.color.x);
 				}
 			}
 		}

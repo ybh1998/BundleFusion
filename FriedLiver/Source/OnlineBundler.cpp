@@ -108,7 +108,6 @@ void OnlineBundler::getCurrentFrame()
 	m_cudaImageManager->copyToBundling(m_input.d_inputDepthRaw, m_input.d_inputDepthFilt, m_input.d_inputColor);
 	CUDAImageUtil::resampleToIntensity(m_input.d_intensitySIFT, m_input.m_widthSIFT, m_input.m_heightSIFT,
 		m_input.d_inputColor, m_input.m_inputColorWidth, m_input.m_inputColorHeight);
-
 	if (m_input.m_bFilterIntensity) {
 		CUDAImageUtil::gaussFilterIntensity(m_input.d_intensityFilterHelper, m_input.d_intensitySIFT, m_input.m_intensitySigmaD, m_input.m_widthSIFT, m_input.m_heightSIFT);
 		std::swap(m_input.d_intensityFilterHelper, m_input.d_intensitySIFT);

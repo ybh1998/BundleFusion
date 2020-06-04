@@ -921,7 +921,7 @@ CDXUTTextHelper::~CDXUTTextHelper()
 //--------------------------------------------------------------------------------------
 void CDXUTTextHelper::Init( _In_ int nLineHeight )
 {
-    m_clr = DirectX::XMFLOAT4( 1, 1, 1, 1 );
+    m_clr = XMFLOAT4( 1, 1, 1, 1 );
     m_pt.x = 0;
     m_pt.y = 0;
     m_nLineHeight = nLineHeight;

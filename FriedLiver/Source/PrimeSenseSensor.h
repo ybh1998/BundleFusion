@@ -44,7 +44,7 @@ public:
 
 protected:
 	//! reads depth and color from the sensor
-	bool readDepthAndColor(float* depthFloat, vec4uc* colorRGBX);
+	bool readDepthAndColor(float* depthFloat, vec4f* colorRGBX);
 
 
 	// to prevent drawing until we have data for both streams
@@ -68,7 +68,8 @@ protected:
 	openni::VideoStream			m_depthStream;
 	openni::VideoStream			m_colorStream;
 	openni::VideoStream**		m_streams;
-	
+	FILE*						record_exposure;
+	float						curve[256];
 };
 
 #endif

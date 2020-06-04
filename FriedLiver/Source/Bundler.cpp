@@ -276,7 +276,7 @@ bool Bundler::optimize(unsigned int numNonLinIterations, unsigned int numLinIter
 	return ret;
 }
 
-void Bundler::storeCachedFrame(unsigned int depthWidth, unsigned int depthHeight, const uchar4* d_inputColor, unsigned int colorWidth, unsigned int colorHeight, const float* d_inputDepthRaw)
+void Bundler::storeCachedFrame(unsigned int depthWidth, unsigned int depthHeight, const float4* d_inputColor, unsigned int colorWidth, unsigned int colorHeight, const float* d_inputDepthRaw)
 {
 	m_cudaCache->storeFrame(d_inputDepthRaw, depthWidth, depthHeight, d_inputColor, colorWidth, colorHeight);
 }

@@ -36,7 +36,7 @@ public:
 	//TODO should this live outside?
 	void detectFeatures(float* d_intensitySift, const float* d_inputDepthFilt);
 
-	void storeCachedFrame(unsigned int depthWidth, unsigned int depthHeight, const uchar4* d_inputColor,
+	void storeCachedFrame(unsigned int depthWidth, unsigned int depthHeight, const float4* d_inputColor,
 		unsigned int colorWidth, unsigned int colorHeight, const float* d_inputDepthRaw);
 	void copyFrame(const Bundler* b, unsigned int frame);
 	void addInvalidFrame();

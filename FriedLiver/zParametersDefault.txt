@@ -1,5 +1,5 @@
 // 0=Kinect; 1=PrimeSense; 2=KinectOne; 3=BinaryDumpReader; 4=NetworkSensor; 5=IntelSensor; 6=RealSense; 7=StructureSensor; 8=SensorDataReader (for offline processing)
-s_sensorIdx = 8;
+s_sensorIdx = 1;
 
 s_numSolveFramesBeforeExit = 30;//-1 //#frames to run after solve done, then saves and exits; -1 to stop after no more reintegration ops
 
@@ -42,7 +42,7 @@ s_SDFTruncation = 0.06f;				//truncation in meter
 s_SDFTruncationScale = 0.02f;			//truncation scale in meter per meter
 s_SDFMaxIntegrationDistance = 3.0f;		//maximum integration in meter
 s_SDFIntegrationWeightSample = 1;		//weight for an integrated depth value
-s_SDFIntegrationWeightMax = 99999999;	//maximum integration weight for a voxel
+s_SDFIntegrationWeightMax = 100000000;	//maximum integration weight for a voxel
 // s_SDFBlockSize is pound defined (SDF_BLOCK_SIZE)
 // s_hashBucketSize is pound defined (HASH_BUCKET_SIZE)
 s_hashNumBuckets = 400000;				//smaller voxels require more space
@@ -94,7 +94,7 @@ s_remappingDepthDiscontinuityThresLin	 = 0.01f;
 
 s_bUseCameraCalibration = false;
 
-s_marchingCubesMaxNumTriangles = 3000000; // max buffer size for marching cube
+s_marchingCubesMaxNumTriangles = 6000000; // max buffer size for marching cube
 
 //streaming parameters (streaming disabled for BundleFusion)
 s_streamingEnabled = false;
@@ -105,6 +105,10 @@ s_streamingInitialChunkListSize = 2000;
 s_streamingRadius = 5.0f; // Depends on DepthMin and DepthMax 
 s_streamingPos = 0.0f 0.0f 3.0f 1.0f; // Depends on DepthMin and DepthMax
 s_streamingOutParts = 80;	// number of frames required to sweep through the entire hash
+
+//OpenNI file configuration
+s_oniFile = "../data/6";	//?????,??*.oni,*_curve.txt,*_frame_exp.txt???
+
 
 //recording of the input data
 s_recordData = false;			// master flag for data recording: enables or disables data recording

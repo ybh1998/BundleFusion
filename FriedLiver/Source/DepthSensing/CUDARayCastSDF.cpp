@@ -49,7 +49,6 @@ void CUDARayCastSDF::render(const HashDataStruct& hashData, const HashParams& ha
 		cutilSafeCall(cudaDeviceSynchronize()); 
 		m_timer.start();
 	}
-
 	renderCS(hashData, m_data, m_params);
 
 	//convertToCameraSpace(cameraData);

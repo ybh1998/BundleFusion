@@ -57,7 +57,7 @@ void RGBDSensor::init(unsigned int depthWidth, unsigned int depthHeight, unsigne
 	}
 
 	SAFE_DELETE_ARRAY(m_colorRGBX);
-	m_colorRGBX = new vec4uc[m_colorWidth*m_colorHeight];
+	m_colorRGBX = new vec4f[m_colorWidth*m_colorHeight];
 
 	m_recordDataWidth = GlobalAppState::get().s_recordDataWidth;
 	m_recordDataHeight = GlobalAppState::get().s_recordDataHeight;
@@ -186,11 +186,11 @@ void RGBDSensor::incrementRingbufIdx()
 }
 
 //! gets the pointer to color array
-vec4uc* RGBDSensor::getColorRGBX() {  
+vec4f* RGBDSensor::getColorRGBX() {  
 	return m_colorRGBX;
 }
 
-const vec4uc* RGBDSensor::getColorRGBX() const {
+const vec4f* RGBDSensor::getColorRGBX() const {
 	return m_colorRGBX;
 }
 
@@ -332,11 +332,11 @@ void RGBDSensor::recordFrame()
 
 		if ((m_recordDataWidth == 0 && m_recordDataHeight == 0) || (getColorWidth() == m_recordDataWidth && getColorHeight() == m_recordDataHeight)) {
 			m_recordedColorData.push_back(m_colorRGBX);
-			m_colorRGBX = new vec4uc[getColorWidth()*getColorHeight()];
+			m_colorRGBX = new vec4f[getColorWidth()*getColorHeight()];
 		}
 		else {
-			m_recordedColorData.push_back(new vec4uc[m_recordDataWidth*m_recordDataHeight]);
-			vec4uc* color = m_recordedColorData.back();
+			m_recordedColorData.push_back(new vec4f[m_recordDataWidth*m_recordDataHeight]);
+			vec4f* color = m_recordedColorData.back();
 			float scaleX = (float)(getColorWidth() - 1) / (m_recordDataWidth - 1);
 			float scaleY = (float)(getColorHeight() - 1) / (m_recordDataHeight - 1);
 			for (unsigned int y = 0; y < m_recordDataHeight; y++) {

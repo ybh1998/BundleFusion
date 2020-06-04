@@ -29,15 +29,15 @@ public:
 
 	static HRESULT RenderQuadDynamicDEPTHasHSV(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dDeviceContext, const float* d_data, float minDepth, float maxDepth, unsigned int width, unsigned int height, float scale = 1.0f, DirectX::XMFLOAT2 Pow2Ratios = DirectX::XMFLOAT2(1.0f, 1.0f), ID3D11PixelShader* pixelShader = NULL);
 	static HRESULT RenderQuadDynamicUCHAR4(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dDeviceContext, const uchar4* d_data, unsigned int width, unsigned int height, float scale = 1.0f, DirectX::XMFLOAT2 Pow2Ratios = DirectX::XMFLOAT2(1.0f, 1.0f), ID3D11PixelShader* pixelShader = NULL);
-	static HRESULT RenderQuadDynamic(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dDeviceContext, float* d_data, unsigned int nChannels, unsigned int width, unsigned int height, float scale = 1.0f, DirectX::XMFLOAT2 Pow2Ratios = DirectX::XMFLOAT2(1.0f, 1.0f), ID3D11PixelShader* pixelShader = NULL);
+	static HRESULT RenderQuadDynamic(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dDeviceContext, const float* d_data, unsigned int nChannels, unsigned int width, unsigned int height, float scale = 1.0f, DirectX::XMFLOAT2 Pow2Ratios = DirectX::XMFLOAT2(1.0f, 1.0f), ID3D11PixelShader* pixelShader = NULL);
 	
-	static void RenderQuad(ID3D11DeviceContext* pd3dDeviceContext, float* d_data, unsigned int nChannels, unsigned int width, unsigned int height, float scale = 1.0f , DirectX::XMFLOAT2 Pow2Ratios = DirectX::XMFLOAT2(1.0f, 1.0f), ID3D11PixelShader* pixelShader = NULL );
+	static void RenderQuad(ID3D11DeviceContext* pd3dDeviceContext, const float* d_data, unsigned int nChannels, unsigned int width, unsigned int height, float scale = 1.0f , DirectX::XMFLOAT2 Pow2Ratios = DirectX::XMFLOAT2(1.0f, 1.0f), ID3D11PixelShader* pixelShader = NULL );
 	static void RenderQuad(ID3D11DeviceContext* pd3dDeviceContext, ID3D11PixelShader* pixelShader, ID3D11ShaderResourceView** srvs, UINT numShaderResourceViews, DirectX::XMFLOAT2 Pow2Ratios = DirectX::XMFLOAT2(1.0f, 1.0f));
 	static void RenderQuad(ID3D11DeviceContext* pd3dDeviceContext, ID3D11ShaderResourceView* srv, float scale = 1.0f, DirectX::XMFLOAT2 Pow2Ratios = DirectX::XMFLOAT2(1.0f, 1.0f), ID3D11PixelShader* pixelShader = NULL);
 
 private:
 
-	static void RenderQuadHelper(ID3D11DeviceContext* pd3dDeviceContext, float* d_data, cudaGraphicsResource* pCuda, ID3D11ShaderResourceView* pTmpTextureSRV, unsigned int size, float scale, DirectX::XMFLOAT2 Pow2Ratios , ID3D11PixelShader* pixelShader);
+	static void RenderQuadHelper(ID3D11DeviceContext* pd3dDeviceContext, const float* d_data, cudaGraphicsResource* pCuda, ID3D11ShaderResourceView* pTmpTextureSRV, unsigned int size, float scale, DirectX::XMFLOAT2 Pow2Ratios , ID3D11PixelShader* pixelShader);
 	
 	static ID3D11InputLayout*	s_VertexLayout;
 	static ID3D11Buffer*		s_VertexBuffer;

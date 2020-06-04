@@ -110,7 +110,7 @@ bool SensorDataReader::processDepth()
 
 		if (m_bHasColorData) {
 			for (unsigned int i = 0; i < getColorWidth()*getColorHeight(); i++) {
-				m_colorRGBX[i] = vec4uc(frameState.m_colorFrame[i]);
+				m_colorRGBX[i] = vec4f(frameState.m_colorFrame[i]) / 255.0f;
 			}
 		}
 		frameState.free();
